@@ -15,7 +15,7 @@ h1{font-size:30px;line-height:1.05;margin:8px 0}.sub{color:var(--muted);line-hei
 button{width:100%;border:0;border-radius:15px;padding:14px 16px;font-size:16px;font-weight:700;background:var(--accent);color:white;margin-top:10px}
 button.secondary{background:#eef2f7;color:var(--ink)}button.option{background:white;color:var(--ink);border:1px solid var(--line);text-align:left}
 button.option.correct{border-color:var(--good);color:var(--good);background:#f0fdf4}button.option.wrong{border-color:var(--bad);color:var(--bad);background:#fef2f2}
-.word{font-size:31px;font-weight:800;margin:8px 0}.pron{color:var(--muted);font-size:14px}.meaning{font-size:19px;font-weight:700;margin-top:12px}.example{padding:12px 14px;background:#f8fafc;border-radius:14px;margin-top:12px;line-height:1.5}
+.word{font-size:31px;font-weight:800;margin:8px 0}.word.speakable{cursor:pointer;display:inline-block;touch-action:manipulation}.word.speakable:active{opacity:.55}.listen-hint{font-size:12px;color:var(--muted);margin:-2px 0 6px}.pron{color:var(--muted);font-size:14px}.meaning{font-size:19px;font-weight:700;margin-top:12px}.example{padding:12px 14px;background:#f8fafc;border-radius:14px;margin-top:12px;line-height:1.5}
 .small{font-size:13px;color:var(--muted)}.hidden{display:none}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#f8fafc;border-radius:14px;padding:12px;text-align:center}.stat b{display:block;font-size:20px}
 nav{position:sticky;bottom:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:20px;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);padding:7px;border:1px solid var(--line);border-radius:18px}
 nav button{margin:0;padding:11px 5px;font-size:13px}.screen{display:none}.screen.active{display:block}
@@ -26,7 +26,7 @@ nav button{margin:0;padding:11px 5px;font-size:13px}.screen{display:none}.screen
 
 <section id="home" class="screen active">
  <div class="card">
-  <div class="row"><div><b>Season 1 · Episode 1</b><div class="small">Pilot · Before Watching</div></div><span class="pill">v0.1</span></div>
+  <div class="row"><div><b>Season 1 · Episode 1</b><div class="small">Pilot · Before Watching</div></div><span class="pill">v0.2</span></div>
   <div class="progress"><div id="homeProgress"></div></div>
   <p class="small" id="progressText">0 / 10 words</p>
   <button onclick="startLearn()">事前学習を始める</button>
@@ -41,8 +41,8 @@ nav button{margin:0;padding:11px 5px;font-size:13px}.screen{display:none}.screen
 <section id="learn" class="screen">
  <div class="card">
   <div class="row"><span class="pill" id="counter"></span><span class="small" id="importance"></span></div>
-  <div class="word" id="word"></div><div class="pron" id="pron"></div>
-  <div id="reveal" class="hidden"><div class="meaning" id="meaning"></div><div class="example" id="example"></div><button class="secondary" onclick="speak()">発音を聞く</button></div>
+  <div class="word speakable" id="word" onclick="speakWord(words[idx].w)" role="button" tabindex="0"></div><div class="listen-hint">🔊 単語をタップで発音</div><div class="pron" id="pron"></div>
+  <div id="reveal" class="hidden"><div class="meaning" id="meaning"></div><div class="example" id="example"></div><button class="secondary" onclick="speakWord(words[idx].w)">発音を聞く</button></div>
   <button id="revealBtn" onclick="reveal()">意味を見る</button>
   <button id="nextBtn" class="hidden" onclick="nextWord()">次へ</button>
  </div>
@@ -50,7 +50,7 @@ nav button{margin:0;padding:11px 5px;font-size:13px}.screen{display:none}.screen
 
 <section id="quiz" class="screen">
  <div class="card"><div class="row"><b>Quick Test</b><span class="pill" id="quizCount"></span></div>
- <p class="small">意味を選択</p><div class="word" id="quizWord"></div><div id="options"></div><div id="feedback" class="example hidden"></div><button id="quizNext" class="hidden" onclick="nextQuiz()">次の問題</button></div>
+ <p class="small">意味を選択</p><div class="word speakable" id="quizWord" onclick="speakWord(words[qidx].w)" role="button" tabindex="0"></div><div class="listen-hint">🔊 単語をタップで発音</div><div id="options"></div><div id="feedback" class="example hidden"></div><button id="quizNext" class="hidden" onclick="nextQuiz()">次の問題</button></div>
 </section>
 
 <section id="review" class="screen">
@@ -80,7 +80,8 @@ function startLearn(){idx=0;show("learn");renderWord()}
 function renderWord(){let x=words[idx];counter.textContent=(idx+1)+" / "+words.length;importance.textContent=x.i;word.textContent=x.w;pron.textContent=x.p;meaning.textContent=x.m;example.innerHTML="<b>Example</b><br>"+x.e;reveal.classList.add("hidden");nextBtn.classList.add("hidden");revealBtn.classList.remove("hidden")}
 function reveal(){reveal.classList.remove("hidden");revealBtn.classList.add("hidden");nextBtn.classList.remove("hidden");if(!state.learned.includes(words[idx].w))state.learned.push(words[idx].w);save()}
 function nextWord(){if(idx<words.length-1){idx++;renderWord()}else startQuiz(false)}
-function speak(){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(words[idx].w);u.lang="en-US";u.rate=.75;speechSynthesis.speak(u)}
+function speakWord(text){if(!('speechSynthesis' in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=.72;speechSynthesis.speak(u)}
+function speak(){speakWord(words[idx].w)}
 function startQuiz(review){reviewMode=review;qidx=0;score=0;answered=0;show("quiz");renderQuiz()}
 function renderQuiz(){let x=words[qidx];quizCount.textContent=(qidx+1)+" / "+words.length;quizWord.textContent=x.w;feedback.classList.add("hidden");quizNext.classList.add("hidden");let pool=[x.m];while(pool.length<4){let m=words[Math.floor(Math.random()*words.length)].m;if(!pool.includes(m))pool.push(m)}pool.sort(()=>Math.random()-.5);options.innerHTML="";pool.forEach(m=>{let b=document.createElement("button");b.className="option";b.textContent=m;b.onclick=()=>answer(b,m,x);options.appendChild(b)})}
 function answer(btn,m,x){if(answered>qidx)return;answered++;document.querySelectorAll(".option").forEach(b=>b.disabled=true);if(m===x.m){btn.classList.add("correct");score++;state.wrong=state.wrong.filter(w=>w!==x.w);feedback.innerHTML="正解<br><b>"+x.e+"</b>"}else{btn.classList.add("wrong");document.querySelectorAll(".option").forEach(b=>{if(b.textContent===x.m)b.classList.add("correct")});if(!state.wrong.includes(x.w))state.wrong.push(x.w);feedback.innerHTML="正解：<b>"+x.m+"</b><br>"+x.e}feedback.classList.remove("hidden");quizNext.classList.remove("hidden");save()}
