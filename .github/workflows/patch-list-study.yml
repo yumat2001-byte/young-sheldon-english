@@ -1,4 +1,4 @@
-name: Release v3.3
+name: Release v3.3 recovery
 
 on:
   push:
@@ -15,21 +15,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
-      - name: Restore full app and bump version
+          fetch-depth: 0
+      - name: Restore full app and release v3.3
         run: |
-          git show c41a9281c67f8dcc439b8b9632a2c44ed9fa4bd1:index.html > index.html
+          git cat-file blob b2653eba1ffc0d5de9d5df15db493f2ad203fb57 > index.html
           python - <<'PY'
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text()
           s=s.replace('<span class="pill version">v3.2</span>','<span class="pill version">v3.3</span>',1)
+          s=s.replace('<b>Episode 1</b><span><span id="epMeta"></span></span>', '<b>Episode 1</b><span>Sheldon\'s First Day of High School · <span id="epMeta"></span></span>',1)
+          s=s.replace('<h2 style="margin:3px 0">Episode 1</h2></div>', '<h2 style="margin:3px 0">Episode 1</h2><div class="small" style="font-size:15px">Sheldon\'s First Day of High School</div></div>',1)
           p.write_text(s)
           PY
-      - name: Commit release
+      - name: Commit recovery
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Release v3.3" || exit 0
+          git commit -m "Recover app and release v3.3"
           git push
