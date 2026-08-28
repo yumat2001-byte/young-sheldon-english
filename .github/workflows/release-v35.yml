@@ -1,0 +1,110 @@
+name: Release v3.5 UX refinement
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v35.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refine app UX
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p=Path('index.html')
+          s=p.read_text()
+
+          def rep(old,new,count=1):
+              global s
+              if old not in s:
+                  raise SystemExit('missing anchor: '+old[:100])
+              s=s.replace(old,new,count)
+
+          # Version + lighter navigation.
+          rep('<span class="pill version">v3.4</span>','<span class="pill version">v3.5</span>')
+          rep('grid-template-columns:repeat(5,1fr)','grid-template-columns:repeat(3,1fr)')
+          s=s.replace('.episode.locked{opacity:.52;cursor:default}','')
+          s=s.replace('.episode.locked .episode-num{border-color:#d1d5db}','')
+          s=s.replace('.lock{font-size:20px}','')
+          s=s.replace('.review-group{margin-top:20px}.review-head{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:850;padding:10px 0;border-bottom:1px solid var(--line)}.review-head.bad{color:var(--bad)}.review-head.good{color:var(--good)}','')
+          rep('.tap-hint{font-size:11px;color:var(--muted);font-weight:600}', '.tap-hint{font-size:11px;color:var(--muted);font-weight:600}.review-details{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}.review-details summary{cursor:pointer;font-size:13px;font-weight:750;color:var(--muted)}')
+
+          # HOME: show only usable content.
+          rep('<b>MY VOCABULARY</b>','<b>学習状況</b>')
+          rep('<div id="lockedEpisodes"></div><div class="season-title">SEASON 2</div><div class="episode locked"><div class="episode-num">2</div><div class="episode-info"><b>Season 2</b><span>COMING SOON</span></div><span class="lock">🔒</span></div>','')
+
+          # EPISODE: reduce wording and make actions clearer.
+          rep('<button onclick="startCurrentSet()">現在のSETを学習</button>','<button onclick="startCurrentSet()">つづきから</button>')
+          rep('<b>CHAPTERS / SETS</b>','<b>単語セット</b>')
+          rep('<b>EPISODE TEST</b><p class="small">学習済みの単語を横断して復習。苦手な単語を優先します。</p><button onclick="show(\'settings\')">テスト設定</button>', '<b>復習テスト</b><p class="small">苦手な単語を優先して出題します。</p><button onclick="show(\'settings\')">テストする</button>')
+
+          # TEST: hide unavailable modes and keep only what can be used now.
+          old_settings='<section id="settings" class="screen"><button class="back" onclick="openEpisode()">← Episode 1</button><div class="card"><h2>学習設定</h2><div class="detail-label" style="border:0;margin-top:0;padding-top:0">問題数</div><div class="choice-grid" id="countChoices"></div><div class="detail-label">出題形式</div><div class="choice-grid"><button class="active">英語 → 日本語</button><button disabled>日 → 英　COMING SOON</button><button disabled>リスニング　COMING SOON</button><button disabled>穴埋め　COMING SOON</button></div><button onclick="startQuiz()">TESTを開始</button></div></section>'
+          new_settings='<section id="settings" class="screen"><button class="back" onclick="openEpisode()">← Episode 1</button><div class="card"><h2>テスト設定</h2><div class="detail-label" style="border:0;margin-top:0;padding-top:0">問題数</div><div class="choice-grid" id="countChoices"></div><button onclick="startQuiz()">テストを始める</button></div></section>'
+          rep(old_settings,new_settings)
+
+          # STUDY: add a clear exit and use a button label that matches the next action.
+          rep('<section id="learn" class="screen"><div class="card">','<section id="learn" class="screen"><button class="back" onclick="exitStudy()">← 戻る</button><div class="card">')
+          rep("nextBtn.textContent=idx===studyWords.length-1?'学習を終える':'次へ'", "nextBtn.textContent=idx===studyWords.length-1?(studyMode==='set'?'SETテストへ':studyMode==='single'?'一覧へ':'学習を終える'):'次へ'")
+          rep("function studySingleWord(i){studyWords=[words[i]];idx=0;studyMode='single';show('learn');renderWord();speakText(words[i].w)}", "function studySingleWord(i){studyWords=[words[i]];idx=0;studyMode='single';show('learn');renderWord();speakText(words[i].w)}function exitStudy(){studyMode==='single'?showList():openEpisode()}")
+
+          # RESULT: only test-result information belongs here.
+          old_review='<section id="review" class="screen"><div class="card"><b>REVIEW</b><h2>今回の結果</h2><div class="stats"><div class="stat"><b id="scoreStat">0%</b><span class="small">正答率</span></div><div class="stat"><b id="wrongCount">0</b><span class="small">間違い</span></div><div class="stat"><b id="reviewKnown">0</b><span class="small">覚えた</span></div><div class="stat"><b id="reviewWeak">0</b><span class="small">苦手</span></div></div><button id="retestWrongBtn" onclick="startWrongRetest()"></button><button id="studyWrongBtn" onclick="startWrongStudy()"></button><div id="reviewWordLists"></div><button class="secondary" onclick="openEpisode()">Episode 1へ戻る</button></div></section>'
+          new_review='<section id="review" class="screen"><div class="card"><div class="small">TEST RESULT</div><h2>今回の結果</h2><div class="stats" style="grid-template-columns:repeat(2,1fr)"><div class="stat"><b id="scoreStat">0%</b><span class="small">正答率</span></div><div class="stat"><b id="wrongCount">0</b><span class="small">間違い</span></div></div><div id="reviewWordLists"></div><button id="studyWrongBtn" onclick="startWrongStudy()"></button><button class="secondary" id="retestWrongBtn" onclick="startWrongRetest()"></button><button class="secondary" onclick="openEpisode()">Episode 1へ戻る</button></div></section>'
+          rep(old_review,new_review)
+
+          # Bottom nav: only destinations worth opening at any time.
+          old_nav='<nav><button onclick="show(\'home\')">HOME</button><button onclick="openEpisode()">EPISODE</button><button onclick="showList()">LIST</button><button onclick="show(\'settings\')">TEST</button><button onclick="show(\'review\')">REVIEW</button></nav>'
+          new_nav='<nav id="mainNav"><button onclick="show(\'home\')">HOME</button><button onclick="showList()">WORDS</button><button onclick="show(\'settings\')">TEST</button></nav>'
+          rep(old_nav,new_nav)
+
+          # Focus mode: no persistent nav during STUDY or TEST.
+          rep("function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);updateStats()}", "function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');let n=document.getElementById('mainNav');if(n)n.classList.toggle('hidden',id==='learn'||id==='quiz');window.scrollTo(0,0);updateStats()}")
+
+          # All SETs are usable from the start. Progress is guidance, not a gate.
+          old_sync="function syncUnlock(){let max=1,total=Math.ceil(words.length/SET_SIZE);for(let i=1;i<total;i++){let c=words.slice((i-1)*SET_SIZE,i*SET_SIZE);if(c.every(mastered))max=i+1;else break}state.unlockedSet=Math.max(state.unlockedSet,max);if(state.unlockedSet>total)state.unlockedSet=total}"
+          rep(old_sync,"function syncUnlock(){state.unlockedSet=Math.ceil(words.length/SET_SIZE)}")
+          rep("function lockedHTML(){let s='';for(let i=2;i<=6;i++)s+='<div class=\"episode locked\"><div class=\"episode-num\">'+i+'</div><div class=\"episode-info\"><b>Episode '+i+'</b><span>COMING SOON</span></div><span class=\"lock\">🔒</span></div>';lockedEpisodes.innerHTML=s}",'')
+          rep("function setRing(chunk,locked){if(locked)return '#d1d5db';let colors=", "function setRing(chunk){let colors=")
+
+          old_open="function openEpisode(){syncUnlock();let sets=Math.ceil(words.length/SET_SIZE),m=words.filter(mastered).length;epWordCount.textContent=words.length+' words';epProgress.style.width=(m/words.length*100)+'%';epProgressText.textContent=m+' / '+words.length+' words mastered';let html='';for(let i=1;i<=sets;i++){let chunk=words.slice((i-1)*SET_SIZE,i*SET_SIZE),done=chunk.filter(mastered).length,locked=i>state.unlockedSet,ring=setRing(chunk,locked);html+='<div class=\"set-row\" '+(locked?'':'onclick=\"startSet('+i+')\"')+'><div class=\"set-num\" style=\"background:'+ring+'\"><span>'+i+'</span></div><div class=\"set-info\"><b>Episode 1 Words '+i+'</b><span>'+chunk.length+'語 · '+done+'/'+chunk.length+' 習得</span></div><div class=\"set-state\">'+(locked?'🔒':done===chunk.length?'CLEAR':'START')+'</div></div>'}setList.innerHTML=html;show('episode')}"
+          new_open="function openEpisode(){syncUnlock();let sets=Math.ceil(words.length/SET_SIZE),m=words.filter(mastered).length;epWordCount.textContent=words.length+' words';epProgress.style.width=(m/words.length*100)+'%';epProgressText.textContent=m+' / '+words.length+'語 習得';let html='';for(let i=1;i<=sets;i++){let chunk=words.slice((i-1)*SET_SIZE,i*SET_SIZE),done=chunk.filter(mastered).length,ring=setRing(chunk);html+='<div class=\"set-row\" onclick=\"startSet('+i+')\"><div class=\"set-num\" style=\"background:'+ring+'\"><span>'+i+'</span></div><div class=\"set-info\"><b>SET '+i+'</b><span>'+done+' / '+chunk.length+'語 習得</span></div><div class=\"set-state\">'+(done===chunk.length?'✓':'›')+'</div></div>'}setList.innerHTML=html;show('episode')}"
+          rep(old_open,new_open)
+          rep("function currentSetNo(){syncUnlock();for(let i=1;i<=Math.ceil(words.length/SET_SIZE);i++){let c=words.slice((i-1)*SET_SIZE,i*SET_SIZE);if(c.some(x=>!mastered(x)))return Math.min(i,state.unlockedSet)}return state.unlockedSet}", "function currentSetNo(){for(let i=1;i<=Math.ceil(words.length/SET_SIZE);i++){let c=words.slice((i-1)*SET_SIZE,i*SET_SIZE);if(c.some(x=>!mastered(x)))return i}return Math.ceil(words.length/SET_SIZE)}")
+
+          # Review list: wrong answers first; correct answers stay collapsed unless needed.
+          old_lists="function renderReviewLists(){if(!document.getElementById('reviewWordLists'))return;let wrong=quizWords.filter(x=>currentWrong.includes(x.w)),correct=quizWords.filter(x=>!currentWrong.includes(x.w));reviewWordLists.innerHTML='<div class=\"detail-label\">間違えた単語　'+wrong.length+'語</div>'+(wrong.length?wrong.map(reviewWordRow).join(''):'<p class=\"small\">なし</p>')+'<div class=\"detail-label\">正解した単語　'+correct.length+'語</div>'+(correct.length?correct.map(reviewWordRow).join(''):'<p class=\"small\">なし</p>')}"
+          new_lists="function renderReviewLists(){if(!document.getElementById('reviewWordLists'))return;let wrong=quizWords.filter(x=>currentWrong.includes(x.w)),correct=quizWords.filter(x=>!currentWrong.includes(x.w));reviewWordLists.innerHTML='<div class=\"detail-label\">間違えた単語　'+wrong.length+'語</div>'+(wrong.length?wrong.map(reviewWordRow).join(''):'<p class=\"small\">なし</p>')+(correct.length?'<details class=\"review-details\"><summary>正解した'+correct.length+'語を見る</summary>'+correct.map(reviewWordRow).join('')+'</details>':'')}"
+          rep(old_lists,new_lists)
+
+          # Remove HOME-only stats from RESULT and tighten result action wording.
+          rep("reviewKnown.textContent=c('覚えた');reviewWeak.textContent=c('苦手');",'')
+          rep("studyWrongBtn.textContent='今回間違えた単語を STUDY（'+currentWrong.length+'）'", "studyWrongBtn.textContent=currentWrong.length?'間違えた'+currentWrong.length+'語を学習':'間違いなし'")
+          rep("retestWrongBtn.textContent='間違えた'+currentWrong.length+'語だけ RETEST'", "retestWrongBtn.textContent=currentWrong.length?'間違えた'+currentWrong.length+'語を再テスト':'再テスト不要'")
+          s=s.replace('lockedHTML();','')
+
+          p.write_text(s)
+
+          tips=Path('smart-tips.js')
+          t=tips.read_text()
+          marker='.today .version::after{content:" · SMART TIPS"}'
+          if marker not in t:
+              raise SystemExit('smart tips badge anchor missing')
+          t=t.replace(marker,'',1)
+          tips.write_text(t)
+          PY
+      - name: Commit v3.5
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html smart-tips.js
+          git commit -m "Release v3.5 focused learning UX" || exit 0
+          git push
