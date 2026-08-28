@@ -56,7 +56,7 @@
 
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.7');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.8');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){
@@ -154,5 +154,30 @@
     const retry=words.filter(x=>currentWrong.includes(x.w));
     if(!retry.length){alert('今回のテストで間違えた単語はありません');return}
     startQuiz(retry,'retest','review');
+  };
+})();
+/* v3.8 result-page word accordion */
+(function(){
+  const style=document.createElement('style');
+  style.textContent='.review-word-accordion{border-bottom:1px solid var(--line)}.review-word-accordion summary{list-style:none;cursor:pointer;padding:15px 0}.review-word-accordion summary::-webkit-details-marker{display:none}.review-word-summary{display:flex;align-items:center;justify-content:space-between;gap:12px}.review-word-main{display:block;min-width:0}.review-word-main .list-word,.review-word-main .list-meaning{display:block}.review-chevron{flex:none;width:32px;height:32px;border-radius:10px;background:#f3f4f6;display:grid;place-items:center;font-size:17px;transition:transform .18s ease}.review-word-accordion[open] .review-chevron{transform:rotate(180deg)}.review-word-panel{background:#f8fafc;border-radius:16px;padding:15px;margin:0 0 15px}.review-word-panel .detail-label{margin-top:16px;padding-top:14px}.review-word-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.review-speak{width:auto;margin:0;padding:9px 12px;font-size:13px;background:#eef2f7;color:var(--ink)}';
+  document.head.appendChild(style);
+
+  function uniqueByWord(items){
+    const seen=new Set();
+    return items.filter(x=>!seen.has(x.w)&&seen.add(x.w));
+  }
+
+  function accordionRow(w){
+    const safeWord=w.w.replace(/'/g,"\\'");
+    const safeExample=w.e.replace(/'/g,"\\'");
+    return '<details class="review-word-accordion"><summary><span class="review-word-summary"><span class="review-word-main"><span class="list-word">'+w.w+'</span><span class="list-meaning">'+w.m+'</span></span><span class="review-chevron">⌄</span></span></summary><div class="review-word-panel"><div class="review-word-top"><div><div class="pron">'+w.p+'</div><div class="meaning">'+w.m+'</div></div><button class="review-speak" onclick="event.preventDefault();event.stopPropagation();speakText(\''+safeWord+'\')">🔊 発音</button></div><div class="detail-label">解説</div><div class="detail-desc">'+w.d+'</div>'+relatedHTML(w)+'<div class="example" onclick="speakText(\''+safeExample+'\')"><div class="small">EXAMPLE</div><div class="example-text">'+w.e+'</div><div class="example-ja">'+w.j+'</div></div></div></details>';
+  }
+
+  window.renderReviewLists=function(){
+    const box=document.getElementById('reviewWordLists');
+    if(!box)return;
+    const wrong=uniqueByWord(quizWords.filter(x=>currentWrong.includes(x.w)));
+    const correct=uniqueByWord(quizWords.filter(x=>!currentWrong.includes(x.w)));
+    box.innerHTML='<div class="detail-label">間違えた単語　'+wrong.length+'語</div>'+(wrong.length?wrong.map(accordionRow).join(''):'<p class="small">なし</p>')+(correct.length?'<details class="review-details"><summary>正解した'+correct.length+'語を見る</summary>'+correct.map(accordionRow).join('')+'</details>':'');
   };
 })();
