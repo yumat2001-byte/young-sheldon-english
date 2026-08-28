@@ -56,7 +56,7 @@
 
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.6');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.7');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){
@@ -76,6 +76,16 @@
     quiz.insertAdjacentElement('afterbegin',back);
     const title=quiz.querySelector('.row b');
     if(title)title.textContent='TEST';
+    const next=document.getElementById('quizNext');
+    if(next){
+      next.classList.remove('fixed-next');
+      next.classList.add('quiz-next-inline');
+      next.style.position='static';
+      next.style.width='100%';
+      next.style.minWidth='0';
+      next.style.marginTop='18px';
+      next.style.boxShadow='none';
+    }
   }
 
   let chosenSet=1;
