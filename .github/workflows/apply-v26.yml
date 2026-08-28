@@ -1,0 +1,41 @@
+name: Apply v2.6 app update
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index.html
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          reps=[
+            ('<section class="hero"><div class="eyebrow">YOUNG SHELDON ENGLISH</div><h1>Watch less.<br>Remember more.</h1><div class="sub">ドラマを進めるほど、知っている英語が増えていく。</div></section>',''),
+            ('<span class="pill version">v2.5</span>','<span class="pill version">v2.6</span>'),
+            ("function showOptionExplanation(m,kind){let w=words.find(x=>x.m===m);if(!w)return;answerNote.className='answer-note '+kind;answerNote.innerHTML='<b class=\"speakable\" onclick=\"speakText(&quot;'+w.w.replace(/&/g,'&amp;').replace(/\\\"/g,'&quot;')+'&quot;)\">'+w.w+'</b><br>'+w.m+'<br><span class=\"small\">'+w.d+'</span>'}","function showOptionExplanation(m,kind){let w=words.find(x=>x.m===m);if(!w)return;answerNote.className='answer-note '+kind;answerNote.innerHTML='<b class=\"speakable\" onclick=\"speakText(&quot;'+w.w.replace(/&/g,'&amp;').replace(/\\\"/g,'&quot;')+'&quot;)\">'+w.w+'</b><br>'+w.m+'<br><span class=\"small\">'+w.d+'</span>';speakText(w.w)}"),
+            ("quizNext.classList.remove('hidden');speakText(x.w)}","quizNext.classList.remove('hidden')}"),
+          ]
+          changed=False
+          for old,new in reps:
+              if old in s:
+                  s=s.replace(old,new,1)
+                  changed=True
+              elif new not in s:
+                  raise SystemExit('Expected text not found: '+old[:120])
+          if changed:
+              p.write_text(s)
+          PY
+      - name: Commit v2.6
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Update app to v2.6"
+          git push
