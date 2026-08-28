@@ -56,7 +56,7 @@
 
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.9');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.10');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){
@@ -217,4 +217,12 @@
     sync();
     new MutationObserver(sync).observe(quizBtn,{attributes:true,attributeFilter:['class']});
   }
+})();
+
+
+/* v3.10 quiz feedback related info */
+(function(){
+  const style=document.createElement('style');
+  style.textContent='.quiz-related{margin-top:10px;color:var(--ink)}.quiz-related .learn-row{font-size:14px;margin:7px 0}.quiz-related .usage{margin-top:10px;background:rgba(255,255,255,.7)}';
+  document.head.appendChild(style);
 })();
