@@ -56,7 +56,7 @@
 
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.16');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.17');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){
@@ -170,7 +170,7 @@
   function accordionRow(w){
     const safeWord=w.w.replace(/'/g,"\\'");
     const safeExample=w.e.replace(/'/g,"\\'");
-    return '<details class="review-word-accordion"><summary><span class="review-word-summary"><span class="review-word-main"><span class="list-word">'+w.w+'</span><span class="list-meaning">'+w.m+'</span></span><span class="review-chevron">⌄</span></span></summary><div class="review-word-panel"><div class="review-word-top"><div><div class="pron">'+w.p+'</div><div class="meaning">'+w.m+'</div></div><button class="review-speak" onclick="event.preventDefault();event.stopPropagation();speakText(\''+safeWord+'\')">🔊 発音</button></div>'+relatedHTML(w)+'<div class="example" onclick="speakText(\''+safeExample+'\')"><div class="small">本編フレーズ</div><div class="example-text">'+w.e+'</div><div class="example-ja">'+w.j+'</div></div></div></details>';
+    return '<details class="review-word-accordion"><summary><span class="review-word-summary"><span class="review-word-main"><span class="list-word">'+w.w+'</span><span class="list-meaning">'+w.m+'</span></span><span class="review-chevron">⌄</span></span></summary><div class="review-word-panel"><div class="review-word-top"><div><div class="pron">'+w.p+'</div><div class="meaning">'+w.m+'</div></div><button class="review-speak" onclick="event.preventDefault();event.stopPropagation();speakText(\''+safeWord+'\')">🔊 発音</button></div>'+relatedHTML(w)+'<div class="example" onclick="speakText(\''+safeExample+'\')"><div class="small">本編の実際のセリフ</div><div class="example-text">'+w.e+'</div><div class="example-ja">'+w.j+'</div></div></div></details>';
   }
 
   window.renderReviewLists=function(){
