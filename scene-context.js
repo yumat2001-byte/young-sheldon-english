@@ -1,5 +1,6 @@
 /* v3.19 dialogue context: no scene summaries, no misleading fragment-as-sentence display. */
 (function(){
+  const VERSION='v3.19';
   const sourceUrl='https://transcripts.foreverdreaming.org/viewtopic.php?t=32113';
 
   /* Verified complete spoken lines only. */
@@ -35,6 +36,10 @@
     document.querySelectorAll('.episode-context').forEach(el=>el.remove());
   }
 
+  function updateVersion(){
+    document.querySelectorAll('.version').forEach(el=>{el.textContent=VERSION});
+  }
+
   function enrich(example){
     if(!example)return;
     const word=wordFromExample(example);
@@ -53,6 +58,7 @@
   }
 
   function scan(){
+    updateVersion();
     cleanOldSceneBoxes();
     document.querySelectorAll('.example:not(.hidden)').forEach(enrich);
   }
