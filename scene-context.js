@@ -1,12 +1,29 @@
-/* v3.19 dialogue context: no scene summaries, no misleading fragment-as-sentence display. */
+/* v3.20 dialogue context: show short surrounding dialogue inline; no external transcript link. */
 (function(){
-  const VERSION='v3.19';
-  const sourceUrl='https://transcripts.foreverdreaming.org/viewtopic.php?t=32113';
+  const VERSION='v3.20';
 
-  /* Verified complete spoken lines only. */
+  /* Complete spoken line overrides that have been verified. */
   const verifiedFullLines={
     adopted:{en:"He's adopted.",ja:'彼は養子だ'},
     allergy:{en:'Are you crying or having an allergy attack?',ja:'泣いてるの？ それともアレルギー発作？'}
+  };
+
+  /* Short surrounding dialogue shown directly on the learning card. */
+  const dialogueContext={
+    adopted:[
+      'I was exploring dimensional kinematics.',
+      'Admit it... He\'s adopted.',
+      'SHELDON: How can I be adopted',
+      'when I have a twin sister?',
+      'Think, monkey, think.'
+    ],
+    kinematics:[
+      'I was exploring dimensional kinematics.',
+      'Admit it... He\'s adopted.',
+      'SHELDON: How can I be adopted',
+      'when I have a twin sister?',
+      'Think, monkey, think.'
+    ]
   };
 
   if(typeof words!=='undefined'){
@@ -17,7 +34,7 @@
   }
 
   const style=document.createElement('style');
-  style.textContent='.episode-source-row{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.episode-source{display:inline-block;color:#475569;font-size:12px;font-weight:750;text-decoration:none}.episode-source:after{content:" ↗"}';
+  style.textContent='.episode-dialogue-context{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.episode-dialogue-context b{display:block;font-size:12px;color:var(--ink);margin-bottom:7px}.episode-dialogue-line{font-size:14px;line-height:1.65;color:#475569;white-space:pre-wrap}.episode-dialogue-line+.episode-dialogue-line{margin-top:3px}';
   document.head.appendChild(style);
 
   function wordFromExample(example){
@@ -32,8 +49,8 @@
     return null;
   }
 
-  function cleanOldSceneBoxes(){
-    document.querySelectorAll('.episode-context').forEach(el=>el.remove());
+  function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
   function updateVersion(){
@@ -42,27 +59,34 @@
     });
   }
 
+  function removeLegacy(){
+    document.querySelectorAll('.episode-context,.episode-source-row').forEach(el=>el.remove());
+  }
+
   function enrich(example){
     if(!example)return;
     const word=wordFromExample(example);
     if(!word)return;
     const x=(typeof words!=='undefined')?words.find(v=>v.w===word):null;
 
-    /* Never label a stored fragment as a full dialogue sentence. */
     const label=example.querySelector('.small');
     const desiredLabel=x&&x._fullDialogue?'本編のセリフ（全文）':'本編で使われた表現';
     if(label&&label.textContent!==desiredLabel) label.textContent=desiredLabel;
 
-    if(example.querySelector('.episode-source-row'))return;
-    const row=document.createElement('div');
-    row.className='episode-source-row';
-    row.innerHTML='<a class="episode-source" href="'+sourceUrl+'" target="_blank" rel="noopener">前後のセリフを確認</a>';
-    example.appendChild(row);
+    const lines=dialogueContext[word];
+    const old=example.querySelector('.episode-dialogue-context');
+    if(!lines){if(old)old.remove();return}
+    if(old)return;
+
+    const box=document.createElement('div');
+    box.className='episode-dialogue-context';
+    box.innerHTML='<b>前後のセリフ</b>'+lines.map(line=>'<div class="episode-dialogue-line">'+escapeHTML(line)+'</div>').join('');
+    example.appendChild(box);
   }
 
   function scan(){
     updateVersion();
-    cleanOldSceneBoxes();
+    removeLegacy();
     document.querySelectorAll('.example:not(.hidden)').forEach(enrich);
   }
 
