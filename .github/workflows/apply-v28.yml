@@ -1,0 +1,55 @@
+name: Apply v2.8 review update
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch review
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          s=s.replace('<span class="pill version">v2.7</span>','<span class="pill version">v2.8</span>',1)
+          s=s.replace('<span class="pill version">v2.6</span>','<span class="pill version">v2.8</span>',1)
+          # Add review word lists under the action buttons.
+          anchor='<button id="studyWrongBtn" onclick="startWrongStudy()"></button><button class="secondary" onclick="openEpisode()">Episode 1へ戻る</button>'
+          replacement='<button id="studyWrongBtn" onclick="startWrongStudy()"></button><div id="reviewWordLists"></div><button class="secondary" onclick="openEpisode()">Episode 1へ戻る</button>'
+          if 'id="reviewWordLists"' not in s:
+              if anchor not in s: raise SystemExit('review anchor not found')
+              s=s.replace(anchor,replacement,1)
+          # Track which tested words were answered correctly on the first attempt.
+          decl="let idx=0,qidx=0,score=0,answered=0,studyWords=[],quizWords=[],currentWrong=[],detailIndex=0,studyMode='set';"
+          if decl in s:
+              s=s.replace(decl,"let idx=0,qidx=0,score=0,answered=0,studyWords=[],quizWords=[],currentWrong=[],currentCorrect=[],detailIndex=0,studyMode='set';",1)
+          elif 'currentCorrect=[]' not in s:
+              raise SystemExit('state declaration not found')
+          # New quiz/retest resets both result groups.
+          s=s.replace("qidx=0;score=0;answered=0;currentWrong=[];questionAnswered=false;show('quiz')","qidx=0;score=0;answered=0;currentWrong=[];currentCorrect=[];questionAnswered=false;show('quiz')")
+          # Replace answer function so first-attempt correctness determines score and grouping.
+          start=s.find('function answer(btn,m,x){')
+          end=s.find('function nextQuiz()',start)
+          if start<0 or end<0: raise SystemExit('answer function boundary not found')
+          new_answer="function answer(btn,m,x){if(questionAnswered){showOptionExplanation(m,m===x.m?'correct':'wrong');return}if(m!==x.m){btn.classList.add('wrong');if(!currentWrong.includes(x.w))currentWrong.push(x.w);currentCorrect=currentCorrect.filter(w=>w!==x.w);setMasteryWord(x.w,'苦手');showOptionExplanation(m,'wrong');return}questionAnswered=true;answered++;if(!currentWrong.includes(x.w)){score++;if(!currentCorrect.includes(x.w))currentCorrect.push(x.w)}btn.classList.add('correct');promote(x.w);save();showOptionExplanation(x.m,'correct');feedback.innerHTML='<div class=\"example-text\">'+x.e+'</div><div class=\"example-ja\">'+x.j+'</div>';feedback.classList.remove('hidden');quizNext.classList.remove('hidden')}"
+          s=s[:start]+new_answer+s[end:]
+          # Replace review renderer, adding wrong/correct lists and corrected score.
+          start=s.find('function renderReview(){')
+          end=s.find('function startWrongStudy()',start)
+          if start<0 or end<0: raise SystemExit('review function boundary not found')
+          new_review="function reviewWordRow(w,wrong){let i=words.findIndex(x=>x.w===w.w);return '<div class=\"list-item\" onclick=\"detailIndex='+i+';renderDetail();show(\\\'detail\\\')\"><div class=\"list-word speakable\" onclick=\"event.stopPropagation();speakText(\\\''+w.w.replace(/'/g,\"\\\\'\")+'\\\')\">'+w.w+'</div><div class=\"list-meaning\">'+w.m+'</div></div>'}function renderReview(){let total=quizWords.length||answered;scoreStat.textContent=(total?Math.round(score/total*100):0)+'%';wrongCount.textContent=currentWrong.length;reviewKnown.textContent=words.filter(x=>mastery[x.w]==='覚えた').length;reviewWeak.textContent=words.filter(x=>mastery[x.w]==='苦手').length;retestWrongBtn.textContent='間違えた'+currentWrong.length+'語だけ RETEST';studyWrongBtn.textContent='今回間違えた単語を STUDY（'+currentWrong.length+'）';retestWrongBtn.disabled=currentWrong.length===0;studyWrongBtn.disabled=currentWrong.length===0;let wrong=words.filter(x=>currentWrong.includes(x.w));let correct=quizWords.filter(x=>!currentWrong.includes(x.w));reviewWordLists.innerHTML='<div class=\"detail-label\">間違えた単語　'+wrong.length+'語</div>'+(wrong.length?wrong.map(w=>reviewWordRow(w,true)).join(''):'<p class=\"small\">なし</p>')+'<div class=\"detail-label\">正解した単語　'+correct.length+'語</div>'+(correct.length?correct.map(w=>reviewWordRow(w,false)).join(''):'<p class=\"small\">なし</p>')}"
+          s=s[:start]+new_review+s[end:]
+          p.write_text(s)
+          PY
+      - name: Commit v2.8
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Show correct and incorrect test words in review"
+          git push
