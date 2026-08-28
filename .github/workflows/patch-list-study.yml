@@ -14,14 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Remove Pilot label
+      - name: Add Episode 1 title
         run: |
           python - <<'PY'
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text()
-          s=s.replace('<span>Pilot · <span id="epMeta"></span></span>','<span><span id="epMeta"></span></span>',1)
-          s=s.replace('<div class="small" style="font-size:15px">Pilot</div>','',1)
+          title="Sheldon's First Day of High School"
+          s=s.replace('<b>Episode 1</b><span><span id="epMeta"></span></span>',f'<b>Episode 1</b><span>{title} · <span id="epMeta"></span></span>',1)
+          s=s.replace('<h2 style="margin:3px 0">Episode 1</h2></div>',f'<h2 style="margin:3px 0">Episode 1</h2><div class="small" style="font-size:15px">{title}</div></div>',1)
           p.write_text(s)
           PY
       - name: Commit update
@@ -29,5 +30,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "Remove Pilot from Episode 1"
+          git diff --cached --quiet || git commit -m "Add descriptive Episode 1 title"
           git push
