@@ -1,6 +1,6 @@
-/* v3.21 dialogue context: show short surrounding dialogue inline and highlight the target vocabulary. */
+/* v3.22 dialogue context: keep each spoken sentence intact and highlight the target vocabulary. */
 (function(){
-  const VERSION='v3.21';
+  const VERSION='v3.22';
 
   /* Complete spoken line overrides that have been verified. */
   const verifiedFullLines={
@@ -8,20 +8,18 @@
     allergy:{en:'Are you crying or having an allergy attack?',ja:'泣いてるの？ それともアレルギー発作？'}
   };
 
-  /* Short surrounding dialogue shown directly on the learning card. */
+  /* Short surrounding dialogue shown directly on the learning card. Keep complete sentences together. */
   const dialogueContext={
     adopted:[
       'I was exploring dimensional kinematics.',
       'Admit it... He\'s adopted.',
-      'SHELDON: How can I be adopted',
-      'when I have a twin sister?',
+      'SHELDON: How can I be adopted when I have a twin sister?',
       'Think, monkey, think.'
     ],
     kinematics:[
       'I was exploring dimensional kinematics.',
       'Admit it... He\'s adopted.',
-      'SHELDON: How can I be adopted',
-      'when I have a twin sister?',
+      'SHELDON: How can I be adopted when I have a twin sister?',
       'Think, monkey, think.'
     ]
   };
