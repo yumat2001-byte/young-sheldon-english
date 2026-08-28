@@ -1,0 +1,196 @@
+name: Release v3.16 episode phrase audit
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v316.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace invented examples with verified episode phrases
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          phrases = {
+            'nourishment': ('nourishment of our bodies','私たちの体の栄養'),
+            'revolting': ('that was revolting','それは気持ち悪かった'),
+            'credentials': ('questioned my credentials','私の資格・経歴に疑問を呈した'),
+            'violation': ('in violation of the dress code','服装規定に違反して'),
+            'gifted': ('remarkably gifted','並外れて才能に恵まれた'),
+            'dimwitted': ('how dimwitted you are','君がどれだけ頭が鈍くても'),
+            'kinematics': ('dimensional kinematics','次元運動学'),
+            'remarkably': ('remarkably gifted','並外れて才能に恵まれた'),
+            'arranged': ('still be arranged','まだ手配できる'),
+            'business': ('None of your business','あなたには関係ない'),
+            'theoretical': ('theoretical physics','理論物理学'),
+            'backup': ('my backup plan','私の予備の計画'),
+            'professional': ('professional ticket taker','プロの切符係'),
+            'unbalanced': ('unbalanced force','不均衡な力'),
+            'scientific': ('Scientific principles','科学的な原理'),
+            'principle': ('Scientific principles','科学的な原理'),
+            'adopted': ("He's adopted",'彼は養子だ'),
+            'financial': ('financial problems','金銭的な問題'),
+            'reassuring': ('very reassuring','とても安心できる'),
+            'maliciously': ('maliciously harass','悪意をもって嫌がらせする'),
+            'harass': ('maliciously harass','悪意をもって嫌がらせする'),
+            'torment': ('someone else to torment','代わりに苦しめる相手'),
+            'gullible': ("she's gullible",'彼女はだまされやすい'),
+            'intimidated': ('intimidated by you','君に怖気づく'),
+            'intellect': ('recognize my intellect','私の知性を認める'),
+            'exposed': ('an exposed tattoo','露出したタトゥー'),
+            'thorough': ('a thorough cleaning','徹底的な清掃'),
+            'allergy': ('an allergy attack','アレルギー発作'),
+            'despite': ('despite his young age','彼の若さにもかかわらず'),
+            'designated': ('a designated area','指定区域'),
+            'diaphanous': ('blouse is diaphanous','ブラウスが透けている'),
+            'account': ('take that into account','それを考慮に入れる'),
+            'subsection': ('subsection B','B項'),
+            'breach': ('in breach of the hygiene code','衛生規定に違反して'),
+            'hygiene': ('the hygiene code','衛生規定'),
+            'pursue': ('pursue music','音楽を追求する'),
+            'faculty': ('a faculty restroom','教職員用トイレ'),
+            'recruit': ('recruit kids','子どもたちを勧誘する'),
+            'reputation': ('a bad reputation','悪い評判'),
+            'uncertainty': ('a world filled with uncertainty','不確実さに満ちた世界'),
+            'assaulted': ('be assaulted','暴行を受ける'),
+            'haven': ('a haven for higher learning','高等教育のための安全な場所'),
+            'retaliate': ('Do not retaliate','やり返さないで'),
+            'admirable': ('whatever is admirable','称賛に値するもの'),
+            'handbook': ('the student handbook','生徒向け手引書'),
+            'extreme': ('extreme hairstyles','極端な髪型'),
+            'argument': ('a common argument','よくある口論'),
+            'marriage': ('argument in marriages','結婚生活での口論'),
+            'freshman': ('Freshman year','1年生の年'),
+            'license': ('license plates','ナンバープレート'),
+            'prime': ('prime numbers','素数'),
+            'recognize': ('recognize my intellect','私の知性を認める'),
+            'fad': ('start a fad','流行を始める'),
+            'ammonia': ('I smell ammonia','アンモニアのにおいがする'),
+            'homeroom': ('your homeroom','あなたのホームルーム'),
+            'attire': ('sports attire','スポーツ用の服装'),
+            'grooming': ('grooming code','身だしなみ規定'),
+            'blouse': ("this girl's blouse",'この女の子のブラウス'),
+            'accuse': ('accuses me','私を非難する'),
+            'intelligence': ('his intelligence','彼の知性'),
+            'sonata': ('this sonata','このソナタ'),
+            'calculus': ('doing calculus','微積分をやっている'),
+            'Euclidean': ('Euclidean geometry','ユークリッド幾何学'),
+            'geometry': ('Euclidean geometry','ユークリッド幾何学'),
+            'pitch': ('perfect pitch','絶対音感'),
+            'musician': ('Musicians take drugs','音楽家は薬物を使う'),
+            'principal': ("principal's office",'校長室'),
+            'uniform': ('get your uniform on','ユニフォームを着る'),
+            'ordinary': ('ordinary potato','普通のジャガイモ'),
+            'supplies': ("The supplies you'll need",'必要な用品'),
+            'grip': ('alligator grips','ワニ口クリップ'),
+            'rat out': ('ratting people out','人を告げ口する'),
+            'complicated': ('kind of complicated','ちょっと複雑'),
+            'justice': ('Justice descended upon','正義が下された'),
+            'fired': ('I got fired','私は解雇された'),
+            'deserve': ('education he deserves','彼にふさわしい教育'),
+            'afford': ("can't afford private school",'私立学校に通わせる余裕がない'),
+            'private': ('private school','私立学校'),
+            'comforting': ('find comforting','安心できると思う'),
+            'pregnant': ("That girl's pregnant",'あの女の子は妊娠している'),
+          }
+
+          if len(phrases) != 80:
+              raise SystemExit(f'phrase map must contain 80 words, found {len(phrases)}')
+
+          def jsq(v):
+              return "'" + v.replace('\\','\\\\').replace("'","\\'") + "'"
+
+          def split_args(body):
+              args=[]; start=0; quote=False; esc=False; sq=0; par=0; br=0
+              for i,ch in enumerate(body):
+                  if quote:
+                      if esc: esc=False
+                      elif ch=='\\': esc=True
+                      elif ch=="'": quote=False
+                      continue
+                  if ch=="'": quote=True; continue
+                  if ch=='[': sq+=1
+                  elif ch==']': sq-=1
+                  elif ch=='(': par+=1
+                  elif ch==')': par-=1
+                  elif ch=='{': br+=1
+                  elif ch=='}': br-=1
+                  elif ch==',' and sq==0 and par==0 and br==0:
+                      args.append(body[start:i]); start=i+1
+              args.append(body[start:])
+              return args
+
+          p=Path('index.html')
+          s=p.read_text()
+          marker='const words=['
+          start=s.index(marker)+len(marker)
+          end=s.index('];const SET_SIZE',start)
+          block=s[start:end]
+          out=[]; pos=0; seen=[]
+          while True:
+              wpos=block.find('W(',pos)
+              if wpos<0:
+                  out.append(block[pos:]); break
+              out.append(block[pos:wpos])
+              i=wpos+2; depth=1; quote=False; esc=False
+              while i<len(block) and depth:
+                  ch=block[i]
+                  if quote:
+                      if esc: esc=False
+                      elif ch=='\\': esc=True
+                      elif ch=="'": quote=False
+                  else:
+                      if ch=="'": quote=True
+                      elif ch=='(': depth+=1
+                      elif ch==')': depth-=1
+                  i+=1
+              if depth:
+                  raise SystemExit('unterminated W()')
+              body=block[wpos+2:i-1]
+              args=split_args(body)
+              if len(args)!=8:
+                  raise SystemExit(f'expected 8 args, got {len(args)}: {body[:80]}')
+              word=args[0].strip()[1:-1].replace("\\'","'")
+              if word not in phrases:
+                  raise SystemExit(f'missing verified phrase for {word}')
+              args[6]=jsq(phrases[word][0])
+              args[7]=jsq(phrases[word][1])
+              out.append('W('+','.join(args)+')')
+              seen.append(word); pos=i
+          if len(seen)!=80 or set(seen)!=set(phrases):
+              raise SystemExit(f'word audit mismatch: {len(seen)} entries')
+          s=s[:start]+''.join(out)+s[end:]
+
+          s=s.replace('<div class="small">EXAMPLE</div><div class="example-text">','<div class="small">本編フレーズ</div><div class="example-text">')
+          s=s.replace("feedback.innerHTML='<div class=\"example-text\">'+x.e+'</div><div class=\"example-ja\">'+x.j+'</div>'","feedback.innerHTML='<div class=\"small\">本編フレーズ</div><div class=\"example-text\">'+x.e+'</div><div class=\"example-ja\">'+x.j+'</div>'")
+          if '<span class="pill version">v3.15</span>' not in s:
+              raise SystemExit('index v3.15 marker missing')
+          if '<script src="smart-tips.js?v=3.15"></script>' not in s:
+              raise SystemExit('cache v3.15 marker missing')
+          s=s.replace('<span class="pill version">v3.15</span>','<span class="pill version">v3.16</span>',1)
+          s=s.replace('<script src="smart-tips.js?v=3.15"></script>','<script src="smart-tips.js?v=3.16"></script>',1)
+          p.write_text(s)
+
+          p=Path('smart-tips.js')
+          t=p.read_text()
+          if "v.textContent='v3.15'" not in t:
+              raise SystemExit('smart tips v3.15 marker missing')
+          t=t.replace("v.textContent='v3.15'","v.textContent='v3.16'",1)
+          t=t.replace('<div class="small">EXAMPLE</div><div class="example-text">','<div class="small">本編フレーズ</div><div class="example-text">')
+          p.write_text(t)
+          PY
+      - name: Commit release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html smart-tips.js
+          git commit -m "Release v3.16 verified episode phrases" || exit 0
+          git push
