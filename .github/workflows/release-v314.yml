@@ -1,0 +1,52 @@
+name: Release v3.14 mastery retest fix
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v314.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Keep wrong answers at weak mastery
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p=Path('index.html')
+          s=p.read_text()
+
+          old="if(quizMode!=='retest')promote(x.w);"
+          new="if(quizMode!=='retest'&&!currentWrong.includes(x.w))promote(x.w);"
+          if old not in s:
+              raise SystemExit('promotion marker missing')
+          s=s.replace(old,new,1)
+
+          if '<span class=\"pill version\">v3.13</span>' not in s:
+              raise SystemExit('index version marker missing')
+          if '<script src=\"smart-tips.js?v=3.13\"></script>' not in s:
+              raise SystemExit('cache marker missing')
+          s=s.replace('<span class=\"pill version\">v3.13</span>','<span class=\"pill version\">v3.14</span>',1)
+          s=s.replace('<script src=\"smart-tips.js?v=3.13\"></script>','<script src=\"smart-tips.js?v=3.14\"></script>',1)
+          p.write_text(s)
+
+          p=Path('smart-tips.js')
+          s=p.read_text()
+          if "v.textContent='v3.13'" not in s:
+              raise SystemExit('smart tips version marker missing')
+          s=s.replace("v.textContent='v3.13'","v.textContent='v3.14'",1)
+          p.write_text(s)
+          PY
+      - name: Commit release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html smart-tips.js
+          git commit -m "Release v3.14 mastery retest fix" || exit 0
+          git push
