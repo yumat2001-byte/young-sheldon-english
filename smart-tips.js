@@ -1,6 +1,4 @@
-/* Young Sheldon English v3.2 upgrade
-   Contextual memory hooks only when useful; no forced mnemonics.
-*/
+/* Vocabulary memory tips: contextual hooks only when useful. */
 (function(){
   const trivia={
     harass:{title:'日本語につながる',html:'<b>harass → harassment</b><br>日本語の「ハラスメント」は harassment。<b>harass</b> はその動詞で「嫌がらせをする」。'},
@@ -15,8 +13,7 @@
     remarkably:{title:'WORD PARTS',html:'<b>-ly</b> は形容詞から副詞を作ることが多い。<br>remarkable → remarkably = <b>著しく・驚くほど</b>。'},
     maliciously:{title:'WORD PARTS',html:'<b>-ly</b> は副詞の目印になりやすい。<br>malicious（悪意のある）→ maliciously = <b>悪意をもって</b>。'},
     credentials:{title:'使われ方',html:'<b>credentials</b> は「能力や立場を証明するもの」。資格だけでなく、経歴・実績まで含めて使える。'},
-    violation:{title:'WORD FAMILY',html:'<b>violate</b>（違反する・侵害する）→ <b>violation</b>（違反・侵害）。<b>-ion</b> は名詞を作る代表的な語尾。'},
-    arrangement:{title:'WORD PARTS',html:'<b>-ment</b> は名詞を作る代表的な語尾。arrange → arrangement のように「行為・結果」を表す名詞になることが多い。'}
+    violation:{title:'WORD FAMILY',html:'<b>violate</b>（違反する・侵害する）→ <b>violation</b>（違反・侵害）。<b>-ion</b> は名詞を作る代表的な語尾。'}
   };
   const autoParts=[
     {re:/less$/i,label:'-less',text:'「～がない・～を欠いた」。必ず悪い意味になるわけではなく、fearless = 恐れがない → 恐れ知らず。'},
@@ -27,7 +24,6 @@
     {re:/ous$/i,label:'-ous',text:'「～の性質を持つ」形容詞を作ることが多い語尾。'},
     {re:/able$/i,label:'-able',text:'「～できる・～に適した」という形容詞を作ることが多い。'},
     {re:/^un/i,label:'un-',text:'「～でない・反対」などを表す代表的な接頭辞。'},
-    {re:/^re/i,label:'re-',text:'「再び・戻って」を表すことが多い接頭辞。ただし全ての re- 語に機械的に当てはめない。'},
     {re:/^sub/i,label:'sub-',text:'「下・下位・副」を表すことが多い接頭辞。'}
   ];
   function tipFor(x){
@@ -56,7 +52,4 @@
   document.head.appendChild(style);
   const oldRender=window.renderWord;
   if(typeof oldRender==='function')window.renderWord=function(){oldRender.apply(this,arguments);const b=ensureBox('learnRelated','learnMemoryTip');paint(b,currentLearnWord());};
-  const oldDetail=window.openDetail;
-  if(typeof oldDetail==='function')window.openDetail=function(i){oldDetail.apply(this,arguments);const b=ensureBox('detailLearn','detailMemoryTip');paint(b,words[i]);};
-  document.querySelectorAll('.version').forEach(v=>{if(v.textContent.trim()==='v3.1')v.textContent='v3.2'});
 })();
