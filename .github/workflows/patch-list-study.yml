@@ -1,4 +1,4 @@
-name: Apply v3.2 upgrade
+name: Apply v3.3 version bump
 
 on:
   push:
@@ -14,15 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Add Episode 1 title
+      - name: Bump app version
         run: |
           python - <<'PY'
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text()
-          title="Sheldon's First Day of High School"
-          s=s.replace('<b>Episode 1</b><span><span id="epMeta"></span></span>',f'<b>Episode 1</b><span>{title} · <span id="epMeta"></span></span>',1)
-          s=s.replace('<h2 style="margin:3px 0">Episode 1</h2></div>',f'<h2 style="margin:3px 0">Episode 1</h2><div class="small" style="font-size:15px">{title}</div></div>',1)
+          s=s.replace('<span class="pill version">v3.2</span>','<span class="pill version">v3.3</span>',1)
           p.write_text(s)
           PY
       - name: Commit update
@@ -30,5 +28,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "Add descriptive Episode 1 title"
+          git diff --cached --quiet || git commit -m "Release v3.3"
           git push
