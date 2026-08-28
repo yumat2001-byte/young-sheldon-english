@@ -37,7 +37,9 @@
   }
 
   function updateVersion(){
-    document.querySelectorAll('.version').forEach(el=>{el.textContent=VERSION});
+    document.querySelectorAll('.version').forEach(el=>{
+      if(el.textContent!==VERSION) el.textContent=VERSION;
+    });
   }
 
   function enrich(example){
@@ -48,7 +50,8 @@
 
     /* Never label a stored fragment as a full dialogue sentence. */
     const label=example.querySelector('.small');
-    if(label) label.textContent=x&&x._fullDialogue?'本編のセリフ（全文）':'本編で使われた表現';
+    const desiredLabel=x&&x._fullDialogue?'本編のセリフ（全文）':'本編で使われた表現';
+    if(label&&label.textContent!==desiredLabel) label.textContent=desiredLabel;
 
     if(example.querySelector('.episode-source-row'))return;
     const row=document.createElement('div');
@@ -63,7 +66,12 @@
     document.querySelectorAll('.example:not(.hidden)').forEach(enrich);
   }
 
-  const mo=new MutationObserver(()=>scan());
+  let queued=false;
+  const mo=new MutationObserver(()=>{
+    if(queued)return;
+    queued=true;
+    requestAnimationFrame(()=>{queued=false;scan()});
+  });
   mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
   scan();
 })();
