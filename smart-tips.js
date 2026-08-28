@@ -56,7 +56,7 @@
 
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.8');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.9');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){
@@ -180,4 +180,41 @@
     const correct=uniqueByWord(quizWords.filter(x=>!currentWrong.includes(x.w)));
     box.innerHTML='<div class="detail-label">間違えた単語　'+wrong.length+'語</div>'+(wrong.length?wrong.map(accordionRow).join(''):'<p class="small">なし</p>')+(correct.length?'<details class="review-details"><summary>正解した'+correct.length+'語を見る</summary>'+correct.map(accordionRow).join('')+'</details>':'');
   };
+})();
+
+/* v3.9 fixed bottom action bars */
+(function(){
+  const style=document.createElement('style');
+  style.textContent='.fixed-action-bar{position:fixed;z-index:30;left:50%;transform:translateX(-50%);bottom:max(10px,env(safe-area-inset-bottom));width:min(calc(100% - 32px),688px);padding:7px;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:18px}.fixed-action-bar button{width:100%;margin:0;padding:15px 16px;border-radius:13px}.screen.action-screen{padding-bottom:88px}';
+  document.head.appendChild(style);
+  function wrapActionButton(btn,id){
+    if(!btn)return null;
+    let bar=document.getElementById(id);
+    if(!bar){
+      bar=document.createElement('div');
+      bar.id=id;
+      bar.className='fixed-action-bar';
+      btn.parentNode.insertBefore(bar,btn);
+      bar.appendChild(btn);
+    }
+    btn.classList.remove('fixed-next','quiz-next-inline');
+    btn.style.position='';
+    btn.style.width='';
+    btn.style.minWidth='';
+    btn.style.marginTop='';
+    btn.style.boxShadow='';
+    return bar;
+  }
+  const learn=document.getElementById('learn');
+  const quiz=document.getElementById('quiz');
+  if(learn)learn.classList.add('action-screen');
+  if(quiz)quiz.classList.add('action-screen');
+  wrapActionButton(document.getElementById('nextBtn'),'learnActionBar');
+  const quizBtn=document.getElementById('quizNext');
+  const quizBar=wrapActionButton(quizBtn,'quizActionBar');
+  if(quizBtn&&quizBar){
+    const sync=()=>quizBar.classList.toggle('hidden',quizBtn.classList.contains('hidden'));
+    sync();
+    new MutationObserver(sync).observe(quizBtn,{attributes:true,attributeFilter:['class']});
+  }
 })();
