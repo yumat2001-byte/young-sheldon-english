@@ -1,6 +1,6 @@
-/* v3.20 dialogue context: show short surrounding dialogue inline; no external transcript link. */
+/* v3.21 dialogue context: show short surrounding dialogue inline and highlight the target vocabulary. */
 (function(){
-  const VERSION='v3.20';
+  const VERSION='v3.21';
 
   /* Complete spoken line overrides that have been verified. */
   const verifiedFullLines={
@@ -34,7 +34,7 @@
   }
 
   const style=document.createElement('style');
-  style.textContent='.episode-dialogue-context{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.episode-dialogue-context b{display:block;font-size:12px;color:var(--ink);margin-bottom:7px}.episode-dialogue-line{font-size:14px;line-height:1.65;color:#475569;white-space:pre-wrap}.episode-dialogue-line+.episode-dialogue-line{margin-top:3px}';
+  style.textContent='.episode-dialogue-context{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.episode-dialogue-context b{display:block;font-size:12px;color:var(--ink);margin-bottom:7px}.episode-dialogue-line{font-size:14px;line-height:1.65;color:#475569;white-space:pre-wrap}.episode-dialogue-line+.episode-dialogue-line{margin-top:3px}.dialogue-target-word{color:#2563eb;font-weight:850}';
   document.head.appendChild(style);
 
   function wordFromExample(example){
@@ -51,6 +51,17 @@
 
   function escapeHTML(s){
     return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function escapeRegExp(s){
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  }
+
+  function highlightTarget(line,word){
+    const safe=escapeHTML(line);
+    if(!word)return safe;
+    const re=new RegExp('('+escapeRegExp(escapeHTML(word))+')','gi');
+    return safe.replace(re,'<span class="dialogue-target-word">$1</span>');
   }
 
   function updateVersion(){
@@ -80,7 +91,7 @@
 
     const box=document.createElement('div');
     box.className='episode-dialogue-context';
-    box.innerHTML='<b>前後のセリフ</b>'+lines.map(line=>'<div class="episode-dialogue-line">'+escapeHTML(line)+'</div>').join('');
+    box.innerHTML='<b>前後のセリフ</b>'+lines.map(line=>'<div class="episode-dialogue-line">'+highlightTarget(line,word)+'</div>').join('');
     example.appendChild(box);
   }
 
