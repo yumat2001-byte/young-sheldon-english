@@ -48,7 +48,7 @@
     box.classList.remove('hidden');
   }
   const style=document.createElement('style');
-  style.textContent='.memory-tip{margin-top:14px;padding:15px 16px;border-radius:16px;background:#fffaf0;border:1px solid #f3dfad;line-height:1.65}.memory-tip-head{font-size:13px;font-weight:850;color:#8a5a00;margin-bottom:6px}.memory-tip-body{font-size:14px;color:#374151}.memory-tip-body b{color:#111827}.today .version::after{content:" · SMART TIPS"}';
+  style.textContent='.memory-tip{margin-top:14px;padding:15px 16px;border-radius:16px;background:#fffaf0;border:1px solid #f3dfad;line-height:1.65}.memory-tip-head{font-size:13px;font-weight:850;color:#8a5a00;margin-bottom:6px}.memory-tip-body{font-size:14px;color:#374151}.memory-tip-body b{color:#111827}';
   document.head.appendChild(style);
   const oldRender=window.renderWord;
   if(typeof oldRender==='function')window.renderWord=function(){oldRender.apply(this,arguments);const b=ensureBox('learnRelated','learnMemoryTip');paint(b,currentLearnWord());};
