@@ -1,118 +1,21 @@
-/* v3.23 dialogue context: bilingual sentence display on every vocabulary card. */
+/* v3.24 researched Episode 1 context for all 80 words. */
 (function(){
-  const VERSION='v3.23';
-
-  /* Complete spoken line overrides that have been verified. */
-  const verifiedFullLines={
-    adopted:{en:"He's adopted.",ja:'彼は養子だ'},
-    allergy:{en:'Are you crying or having an allergy attack?',ja:'泣いてるの？ それともアレルギー発作？'}
-  };
-
-  /* Surrounding dialogue available from user-provided context. Keep each sentence intact. */
-  const dialogueContext={
-    adopted:[
-      {en:'I was exploring dimensional kinematics.',ja:'僕は次元運動学を調べていた。'},
-      {en:"Admit it... He's adopted.",ja:'認めなよ……彼は養子でしょ。'},
-      {en:'SHELDON: How can I be adopted when I have a twin sister?',ja:'シェルドン：双子の姉妹がいるのに、どうして僕が養子になれるの？'},
-      {en:'Think, monkey, think.',ja:'考えろ、猿。考えろ。'}
-    ],
-    kinematics:[
-      {en:'I was exploring dimensional kinematics.',ja:'僕は次元運動学を調べていた。'},
-      {en:"Admit it... He's adopted.",ja:'認めなよ……彼は養子でしょ。'},
-      {en:'SHELDON: How can I be adopted when I have a twin sister?',ja:'シェルドン：双子の姉妹がいるのに、どうして僕が養子になれるの？'},
-      {en:'Think, monkey, think.',ja:'考えろ、猿。考えろ。'}
-    ]
-  };
-
-  if(typeof words!=='undefined'){
-    words.forEach(x=>{
-      const full=verifiedFullLines[x.w];
-      if(full){x.e=full.en;x.j=full.ja;x._fullDialogue=true}
-    });
-  }
-
-  const style=document.createElement('style');
-  style.textContent='.episode-dialogue-context{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.episode-dialogue-context b{display:block;font-size:12px;color:var(--ink);margin-bottom:8px}.dialogue-pair+.dialogue-pair{margin-top:10px}.episode-dialogue-line{font-size:14px;line-height:1.6;color:#475569;white-space:normal}.episode-dialogue-ja{font-size:12px;line-height:1.55;color:#94a3b8;margin-top:2px}.dialogue-target-word{color:#2563eb;font-weight:850}';
-  document.head.appendChild(style);
-
-  function wordFromExample(example){
-    if(example.id==='example'&&typeof currentLearnWord==='function'){
-      const x=currentLearnWord(); return x&&x.w;
-    }
-    if(example.id==='feedback'&&typeof quizWords!=='undefined'&&typeof qidx!=='undefined'){
-      const x=quizWords[qidx]; return x&&x.w;
-    }
-    const details=example.closest('.review-word-accordion');
-    if(details){const w=details.querySelector('.list-word');return w&&w.textContent.trim()}
-    return null;
-  }
-
-  function escapeHTML(s){
-    return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-
-  function escapeRegExp(s){
-    return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-  }
-
-  function highlightTarget(line,word){
-    const safe=escapeHTML(line);
-    if(!word)return safe;
-    const re=new RegExp('('+escapeRegExp(escapeHTML(word))+')','gi');
-    return safe.replace(re,'<span class="dialogue-target-word">$1</span>');
-  }
-
-  function updateVersion(){
-    document.querySelectorAll('.version').forEach(el=>{
-      if(el.textContent!==VERSION) el.textContent=VERSION;
-    });
-  }
-
-  function removeLegacy(){
-    document.querySelectorAll('.episode-context,.episode-source-row').forEach(el=>el.remove());
-  }
-
-  function contextFor(x){
-    if(!x)return null;
-    const full=dialogueContext[x.w];
-    if(full)return {title:'前後のセリフ',pairs:full};
-    if(x.e)return {title:'本編の使用箇所',pairs:[{en:x.e,ja:x.j||''}]};
-    return null;
-  }
-
-  function enrich(example){
-    if(!example)return;
-    const word=wordFromExample(example);
-    if(!word)return;
-    const x=(typeof words!=='undefined')?words.find(v=>v.w===word):null;
-
-    const label=example.querySelector('.small');
-    const desiredLabel=x&&x._fullDialogue?'本編のセリフ（全文）':'本編で使われた表現';
-    if(label&&label.textContent!==desiredLabel) label.textContent=desiredLabel;
-
-    const context=contextFor(x);
-    const old=example.querySelector('.episode-dialogue-context');
-    if(!context){if(old)old.remove();return}
-    if(old)old.remove();
-
-    const box=document.createElement('div');
-    box.className='episode-dialogue-context';
-    box.innerHTML='<b>'+escapeHTML(context.title)+'</b>'+context.pairs.map(pair=>'<div class="dialogue-pair"><div class="episode-dialogue-line">'+highlightTarget(pair.en,word)+'</div>'+(pair.ja?'<div class="episode-dialogue-ja">'+escapeHTML(pair.ja)+'</div>':'')+'</div>').join('');
-    example.appendChild(box);
-  }
-
-  function scan(){
-    updateVersion();
-    removeLegacy();
-    document.querySelectorAll('.example:not(.hidden)').forEach(enrich);
-  }
-
-  let queued=false;
-  const mo=new MutationObserver(()=>{
-    if(queued)return;
-    queued=true;
-    requestAnimationFrame(()=>{queued=false;scan()});
-  });
-  mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
-  scan();
+const VERSION='v3.24';
+const scenes={"train":{"b":{"e":"Adult Sheldon talks about his love of trains.","j":"大人のシェルドンが列車好きについて語る。"},"a":{"e":"He imagines other jobs if physics fails.","j":"物理学がだめだった場合の別の仕事を想像する。"}},"newton":{"b":{"e":"Sheldon thinks about Newton's laws outside.","j":"シェルドンが外でニュートンの法則を考える。"},"a":{"e":"He says science makes him happy.","j":"科学は自分を楽しくすると話す。"}},"dinnerOutside":{"b":{"e":"The family asks what Sheldon was doing outside.","j":"家族が外で何をしていたのか尋ねる。"},"a":{"e":"The answer turns into an adoption joke.","j":"答えから養子の冗談に話が広がる。"}},"dinnerPrayer":{"b":{"e":"The family begins grace before dinner.","j":"家族が夕食前のお祈りを始める。"},"a":{"e":"They say amen and start eating.","j":"アーメンと言って食事を始める。"}},"dinnerBusiness":{"b":{"e":"George asks Georgie if he washed his hands.","j":"ジョージがジョージーに手を洗ったか尋ねる。"},"a":{"e":"The family moves on to prayer.","j":"その後、お祈りへ移る。"}},"dinnerSchool":{"b":{"e":"The parents ask about starting school.","j":"両親が学校が始まる気持ちを尋ねる。"},"a":{"e":"Georgie worries about Sheldon being in his grade.","j":"ジョージーはシェルドンと同学年になるのを嫌がる。"}},"highSchoolRisk":{"b":{"e":"Georgie warns Sheldon about high school.","j":"ジョージーが高校について警告する。"},"a":{"e":"Sheldon says school is for learning.","j":"シェルドンは学校は学ぶ場所だと答える。"}},"dinnerFight":{"b":{"e":"The siblings start fighting at dinner.","j":"きょうだいが夕食中にけんかを始める。"},"a":{"e":"Mary tries to stop them.","j":"メアリーが止めようとする。"}},"church":{"b":{"e":"The pastor reads a Bible passage.","j":"牧師が聖書の一節を読む。"},"a":{"e":"Sheldon keeps asking questions.","j":"シェルドンが質問を続ける。"}},"handbook":{"b":{"e":"Mary tells Sheldon to enjoy summer.","j":"メアリーが夏休みを楽しむよう言う。"},"a":{"e":"She sends him outside to play.","j":"最後は外で遊ぶよう言う。"}},"playground":{"b":{"e":"Billy talks to Sheldon about high school.","j":"ビリーが高校へ行くシェルドンに話しかける。"},"a":{"e":"Sheldon explains the word and leaves.","j":"シェルドンが言葉の意味を説明して会話を終える。"}},"parentsFight":{"b":{"e":"The children hear their parents argue about money.","j":"子どもたちが両親のお金の口論を聞く。"},"a":{"e":"They realize money is the issue.","j":"原因がお金だと気づく。"}},"bedroomMoney":{"b":{"e":"Sheldon asks Mary about the family's money.","j":"シェルドンが家計についてメアリーに尋ねる。"},"a":{"e":"Mary reassures him, but Missy doubts it.","j":"メアリーは安心させるが、ミッシーは疑う。"}},"gullible":{"b":{"e":"Missy and Sheldon discuss whether Mary lies.","j":"母親が嘘をつくか二人で話す。"},"a":{"e":"Missy separates gullibility from lying.","j":"ミッシーはだまされやすさと嘘を分ける。"}},"drive":{"b":{"e":"Mary drives Sheldon to high school.","j":"メアリーがシェルドンを高校へ送る。"},"a":{"e":"They discuss how others may react to his intelligence.","j":"周囲が彼の知性にどう反応するか話す。"}},"schoolEntrance":{"b":{"e":"Mary and Sheldon arrive at school.","j":"二人が学校に到着する。"},"a":{"e":"Mary asks him to remove his bow tie.","j":"メアリーが蝶ネクタイを外すよう説得する。"}},"bathroomHall":{"b":{"e":"Mary walks Sheldon through the school.","j":"メアリーがシェルドンと校内を歩く。"},"a":{"e":"They continue to his homeroom.","j":"その後ホームルームへ向かう。"}},"classIntro":{"b":{"e":"The teacher introduces Sheldon to the class.","j":"教師がシェルドンをクラスに紹介する。"},"a":{"e":"Sheldon soon starts pointing out rule violations.","j":"シェルドンはすぐ校則違反を指摘し始める。"}},"dressCode":{"b":{"e":"Sheldon studies his classmates during homeroom.","j":"シェルドンが同級生を観察する。"},"a":{"e":"His rule comments make the room uncomfortable.","j":"校則の指摘で教室が気まずくなる。"}},"teacherMeeting":{"b":{"e":"Staff discuss Sheldon's difficult first classes.","j":"教職員がシェルドンの初日について話す。"},"a":{"e":"They compare what he said to each teacher.","j":"教師たちが彼に言われた内容を共有する。"}},"piano":{"b":{"e":"Music plays during the school meeting.","j":"学校の話し合い中に音楽が流れる。"},"a":{"e":"Sheldon's ear for notes surprises the adults.","j":"音を当てる能力に大人たちが驚く。"}},"schoolOptions":{"b":{"e":"Staff suggest another school setting.","j":"学校側が別の教育環境を提案する。"},"a":{"e":"Mary insists they must educate him here.","j":"メアリーは今の学校で対応するよう求める。"}},"football":{"b":{"e":"Georgie is upset about sharing school with Sheldon.","j":"ジョージーが同じ学校なのを嫌がる。"},"a":{"e":"George orders him back to practice.","j":"ジョージが練習へ戻るよう命じる。"}},"scienceTV":{"b":{"e":"The children watch a science experiment on TV.","j":"子どもたちがテレビの科学実験を見る。"},"a":{"e":"The show lists materials for a potato clock.","j":"番組がジャガイモ時計の材料を挙げる。"}},"ratting":{"b":{"e":"Mary explains a social problem after school.","j":"メアリーが放課後、人間関係の問題を説明する。"},"a":{"e":"She warns that reporting everyone will isolate him.","j":"何でも告げ口すると孤立すると注意する。"}},"dadStory":{"b":{"e":"George tells Sheldon about his old coaching job.","j":"ジョージが以前のコーチ職について話す。"},"a":{"e":"Sheldon learns why his father lost the job.","j":"シェルドンが父が仕事を失った理由を知る。"}},"endingStore":{"b":{"e":"Sheldon thinks about things that feel stable.","j":"シェルドンが変わらず安定したものを考える。"},"a":{"e":"A familiar place gives him comfort.","j":"なじみの場所に安心を感じる。"}},"principal":{"b":{"e":"Georgie says Sheldon is embarrassing the family.","j":"ジョージーがシェルドンのせいで恥ずかしいと訴える。"},"a":{"e":"George admits the school call was unpleasant.","j":"ジョージも学校への呼び出しは嫌だったと認める。"}}};
+const wordScene={"nourishment":"dinnerPrayer","revolting":"bathroomHall","credentials":"teacherMeeting","violation":"schoolEntrance","gifted":"classIntro","dimwitted":"newton","kinematics":"dinnerOutside","remarkably":"classIntro","arranged":"dinnerOutside","business":"dinnerBusiness","theoretical":"train","backup":"train","professional":"train","unbalanced":"newton","scientific":"newton","principle":"newton","adopted":"dinnerOutside","financial":"bedroomMoney","reassuring":"handbook","maliciously":"playground","harass":"playground","torment":"playground","gullible":"gullible","intimidated":"drive","intellect":"drive","exposed":"schoolEntrance","thorough":"bathroomHall","allergy":"bathroomHall","despite":"classIntro","designated":"dressCode","diaphanous":"dressCode","account":"dressCode","subsection":"dressCode","breach":"teacherMeeting","hygiene":"teacherMeeting","pursue":"piano","faculty":"piano","recruit":"dadStory","reputation":"dadStory","uncertainty":"endingStore","assaulted":"highSchoolRisk","haven":"highSchoolRisk","retaliate":"dinnerFight","admirable":"church","handbook":"handbook","extreme":"handbook","argument":"parentsFight","marriage":"parentsFight","freshman":"dinnerSchool","license":"drive","prime":"drive","recognize":"drive","fad":"schoolEntrance","ammonia":"bathroomHall","homeroom":"bathroomHall","attire":"dressCode","grooming":"dressCode","blouse":"dressCode","accuse":"teacherMeeting","intelligence":"teacherMeeting","sonata":"piano","calculus":"schoolOptions","Euclidean":"schoolOptions","geometry":"schoolOptions","pitch":"piano","musician":"piano","principal":"principal","uniform":"football","ordinary":"scienceTV","supplies":"scienceTV","grip":"scienceTV","rat out":"ratting","complicated":"dadStory","justice":"dadStory","fired":"dadStory","deserve":"schoolOptions","afford":"schoolOptions","private":"schoolOptions","comforting":"endingStore","pregnant":"bathroomHall"};
+const supplied={"adopted":[{"en":"I was exploring dimensional kinematics.","ja":"僕は次元運動学について調べていた。","role":"前"},{"en":"Admit it... He's adopted.","ja":"認めなよ……彼は養子でしょ。","role":"使われ方"},{"en":"SHELDON: How can I be adopted when I have a twin sister?","ja":"シェルドン：双子の姉妹がいるのに、どうして僕が養子になれるの？","role":"後"},{"en":"Think, monkey, think.","ja":"考えろ、猿。考えろ。","role":"後"}],"kinematics":[{"en":"I was exploring dimensional kinematics.","ja":"僕は次元運動学について調べていた。","role":"使われ方"},{"en":"Admit it... He's adopted.","ja":"認めなよ……彼は養子でしょ。","role":"後"},{"en":"SHELDON: How can I be adopted when I have a twin sister?","ja":"シェルドン：双子の姉妹がいるのに、どうして僕が養子になれるの？","role":"後"},{"en":"Think, monkey, think.","ja":"考えろ、猿。考えろ。","role":"後"}]};
+const forms={'rat out':'ratting people out'};
+const full={adopted:{e:"He's adopted.",j:'彼は養子だ'},allergy:{e:'Are you crying or having an allergy attack?',j:'泣いてるの？ それともアレルギー発作？'}};
+if(typeof words!=='undefined')words.forEach(x=>{let f=full[x.w];if(f){x.e=f.e;x.j=f.j;x._fullDialogue=true}});
+let st=document.createElement('style');st.textContent='.episode-dialogue-context{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.episode-dialogue-context>b{display:block;font-size:12px;margin-bottom:9px}.dialogue-pair+.dialogue-pair{margin-top:11px}.dialogue-role{font-size:10px;font-weight:800;color:#94a3b8;margin-bottom:2px}.episode-dialogue-line{font-size:14px;line-height:1.6;color:#475569}.episode-dialogue-ja{font-size:12px;line-height:1.55;color:#94a3b8;margin-top:2px}.dialogue-target-word{color:#2563eb;font-weight:850}';document.head.appendChild(st);
+function wof(e){if(e.id==='example'&&typeof currentLearnWord==='function')return currentLearnWord()?.w;if(e.id==='feedback'&&typeof quizWords!=='undefined')return quizWords[qidx]?.w;let d=e.closest('.review-word-accordion'),w=d&&d.querySelector('.list-word');return w&&w.textContent.trim()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function reEsc(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
+function hi(s,w){let z=esc(s),f=forms[w]||w;if(!f)return z;return z.replace(new RegExp('('+reEsc(esc(f))+')','gi'),'<span class="dialogue-target-word">$1</span>')}
+function ver(){document.querySelectorAll('.version').forEach(e=>{if(e.textContent!==VERSION)e.textContent=VERSION})}
+function legacy(){document.querySelectorAll('.episode-context,.episode-source-row').forEach(e=>e.remove())}
+function ctx(x){if(!x)return null;if(supplied[x.w])return supplied[x.w];let s=scenes[wordScene[x.w]];if(!s)return [{en:x.e,ja:x.j||'',role:'使われ方'}];let en=x._fullDialogue?x.e:'In this scene, the dialogue uses “'+x.e+'”.';let ja=x._fullDialogue?(x.j||''):'この場面では「'+(x.j||'')+'」という表現が使われる。';return [{en:s.b.e,ja:s.b.j,role:'前'},{en:en,ja:ja,role:'使われ方'},{en:s.a.e,ja:s.a.j,role:'後'}]}
+function enrich(e){let w=wof(e);if(!w)return;let x=typeof words!=='undefined'?words.find(v=>v.w===w):null,l=e.querySelector('.small'),t=x&&x._fullDialogue?'本編のセリフ（全文）':'本編で使われた表現';if(l&&l.textContent!==t)l.textContent=t;let p=ctx(x),o=e.querySelector('.episode-dialogue-context');if(o)o.remove();if(!p)return;let b=document.createElement('div');b.className='episode-dialogue-context';b.innerHTML='<b>前後の流れ</b>'+p.map(q=>'<div class="dialogue-pair"><div class="dialogue-role">'+esc(q.role||'')+'</div><div class="episode-dialogue-line">'+hi(q.en,w)+'</div>'+(q.ja?'<div class="episode-dialogue-ja">'+esc(q.ja)+'</div>':'')+'</div>').join('');e.appendChild(b)}
+function scan(){ver();legacy();document.querySelectorAll('.example:not(.hidden)').forEach(enrich)}
+let q=false,m=new MutationObserver(()=>{if(q)return;q=true;requestAnimationFrame(()=>{q=false;scan()})});m.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});scan();
 })();
