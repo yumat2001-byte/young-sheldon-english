@@ -56,7 +56,7 @@
 
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.10');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.11');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){
@@ -178,7 +178,7 @@
     if(!box)return;
     const wrong=uniqueByWord(quizWords.filter(x=>currentWrong.includes(x.w)));
     const correct=uniqueByWord(quizWords.filter(x=>!currentWrong.includes(x.w)));
-    box.innerHTML='<div class="detail-label">間違えた単語　'+wrong.length+'語</div>'+(wrong.length?wrong.map(accordionRow).join(''):'<p class="small">なし</p>')+(correct.length?'<details class="review-details"><summary>正解した'+correct.length+'語を見る</summary>'+correct.map(accordionRow).join('')+'</details>':'');
+    box.innerHTML=(wrong.length?'<div class="detail-label">間違えた単語　'+wrong.length+'語</div>'+wrong.map(accordionRow).join(''):'')+(correct.length?'<details class="review-details"><summary>正解した'+correct.length+'語を見る</summary>'+correct.map(accordionRow).join('')+'</details>':'');
   };
 })();
 
