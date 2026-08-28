@@ -1,4 +1,4 @@
-name: Apply v3.3 version bump
+name: Release v3.3
 
 on:
   push:
@@ -10,12 +10,15 @@ permissions:
   contents: write
 
 jobs:
-  patch:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Bump app version
+        with:
+          fetch-depth: 2
+      - name: Restore full app and bump version
         run: |
+          git show c41a9281c67f8dcc439b8b9632a2c44ed9fa4bd1:index.html > index.html
           python - <<'PY'
           from pathlib import Path
           p=Path('index.html')
@@ -23,10 +26,10 @@ jobs:
           s=s.replace('<span class="pill version">v3.2</span>','<span class="pill version">v3.3</span>',1)
           p.write_text(s)
           PY
-      - name: Commit update
+      - name: Commit release
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "Release v3.3"
+          git commit -m "Release v3.3" || exit 0
           git push
