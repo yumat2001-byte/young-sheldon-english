@@ -1,0 +1,56 @@
+name: Patch LIST to STUDY
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-list-study.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index.html
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          old_css='.list-item{padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}.list-word{font-size:18px;font-weight:800}.list-meaning{font-size:13px;color:var(--muted);margin-top:3px}'
+          new_css='.list-item{padding:15px 2px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:14px;transition:.15s}.list-item:active{background:#f3f4f6;transform:scale(.99)}.list-word{font-size:19px;font-weight:850}.list-meaning{font-size:13px;color:var(--muted);margin-top:4px}.list-study-hint{font-size:11px;color:#94a3b8;margin-top:6px}.learn-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.learn-back{width:auto;margin:0;background:#eef2f7;color:var(--ink);padding:10px 13px;font-size:13px}.learn-source{font-size:11px;color:var(--muted);font-weight:700}'
+          if old_css not in s: raise SystemExit('CSS target not found')
+          s=s.replace(old_css,new_css,1)
+
+          old='<section id="learn" class="screen"><div class="card"><div class="row"><span class="pill" id="counter"></span><span class="mastery" id="learnMastery"></span></div>'
+          new='<section id="learn" class="screen"><div class="learn-topbar"><button id="learnBackBtn" class="learn-back hidden" onclick="returnFromListStudy()">← LIST</button><span id="learnSource" class="learn-source"></span></div><div class="card"><div class="row"><span class="pill" id="counter"></span><span class="mastery" id="learnMastery"></span></div>'
+          if old not in s: raise SystemExit('learn target not found')
+          s=s.replace(old,new,1)
+
+          old="let idx=0,qidx=0,score=0,answered=0,studyWords=[],quizWords=[],currentWrong=[],currentCorrect=[],detailIndex=0,studyMode='set',questionAnswered=false;"
+          new="let idx=0,qidx=0,score=0,answered=0,studyWords=[],quizWords=[],currentWrong=[],currentCorrect=[],detailIndex=0,studyMode='set',questionAnswered=false,listStudyIndex=0;"
+          if old not in s: raise SystemExit('state target not found')
+          s=s.replace(old,new,1)
+
+          old="function renderWord(){let x=currentLearnWord();counter.textContent=(idx+1)+' / '+studyWords.length;"
+          new="function renderWord(){let x=currentLearnWord();let fromList=studyMode==='list';learnBackBtn.classList.toggle('hidden',!fromList);learnSource.textContent=fromList?'LISTから単語学習':'';counter.textContent=(idx+1)+' / '+studyWords.length;"
+          if old not in s: raise SystemExit('renderWord target not found')
+          s=s.replace(old,new,1)
+
+          old="function nextWord(){if(idx<studyWords.length-1){idx++;renderWord();speakText(studyWords[idx].w);window.scrollTo(0,0)}else if(studyMode==='set'){startQuiz(studyWords)}else openEpisode()}function showList(){listCount.textContent=words.length+' words';wordList.innerHTML=words.map((x,i)=>'<div class=\"list-item\" onclick=\"openDetail('+i+')\"><div class=\"row\"><span class=\"list-word\">'+x.w+'</span><span class=\"mastery\" data-level=\"'+masteryOf(x.w)+'\">'+masteryOf(x.w)+'</span></div><div class=\"list-meaning\">'+x.m+'　'+x.p+'</div></div>').join('');show('list')}"
+          new="function nextWord(){if(idx<studyWords.length-1){idx++;renderWord();speakText(studyWords[idx].w);window.scrollTo(0,0)}else if(studyMode==='list'){showList()}else if(studyMode==='set'){startQuiz(studyWords)}else openEpisode()}function showList(){listCount.textContent=words.length+' words';wordList.innerHTML=words.map((x,i)=>'<div class=\"list-item\" onclick=\"studyFromList('+i+')\"><div class=\"row\"><span class=\"list-word\">'+x.w+'</span><span class=\"mastery\" data-level=\"'+masteryOf(x.w)+'\">'+masteryOf(x.w)+'</span></div><div class=\"list-meaning\">'+x.m+'　'+x.p+'</div><div class=\"list-study-hint\">タップして STUDY →</div></div>').join('');show('list')}function studyFromList(i){listStudyIndex=i;studyWords=words;idx=i;studyMode='list';show('learn');renderWord();speakText(words[i].w)}function returnFromListStudy(){showList()}"
+          if old not in s: raise SystemExit('list target not found')
+          s=s.replace(old,new,1)
+
+          p.write_text(s)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Make LIST words open STUDY"
+          git push
