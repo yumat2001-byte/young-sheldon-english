@@ -1,6 +1,6 @@
-/* v3.22 dialogue context: keep each spoken sentence intact and highlight the target vocabulary. */
+/* v3.23 dialogue context: bilingual sentence display on every vocabulary card. */
 (function(){
-  const VERSION='v3.22';
+  const VERSION='v3.23';
 
   /* Complete spoken line overrides that have been verified. */
   const verifiedFullLines={
@@ -8,19 +8,19 @@
     allergy:{en:'Are you crying or having an allergy attack?',ja:'泣いてるの？ それともアレルギー発作？'}
   };
 
-  /* Short surrounding dialogue shown directly on the learning card. Keep complete sentences together. */
+  /* Surrounding dialogue available from user-provided context. Keep each sentence intact. */
   const dialogueContext={
     adopted:[
-      'I was exploring dimensional kinematics.',
-      'Admit it... He\'s adopted.',
-      'SHELDON: How can I be adopted when I have a twin sister?',
-      'Think, monkey, think.'
+      {en:'I was exploring dimensional kinematics.',ja:'僕は次元運動学を調べていた。'},
+      {en:"Admit it... He's adopted.",ja:'認めなよ……彼は養子でしょ。'},
+      {en:'SHELDON: How can I be adopted when I have a twin sister?',ja:'シェルドン：双子の姉妹がいるのに、どうして僕が養子になれるの？'},
+      {en:'Think, monkey, think.',ja:'考えろ、猿。考えろ。'}
     ],
     kinematics:[
-      'I was exploring dimensional kinematics.',
-      'Admit it... He\'s adopted.',
-      'SHELDON: How can I be adopted when I have a twin sister?',
-      'Think, monkey, think.'
+      {en:'I was exploring dimensional kinematics.',ja:'僕は次元運動学を調べていた。'},
+      {en:"Admit it... He's adopted.",ja:'認めなよ……彼は養子でしょ。'},
+      {en:'SHELDON: How can I be adopted when I have a twin sister?',ja:'シェルドン：双子の姉妹がいるのに、どうして僕が養子になれるの？'},
+      {en:'Think, monkey, think.',ja:'考えろ、猿。考えろ。'}
     ]
   };
 
@@ -32,7 +32,7 @@
   }
 
   const style=document.createElement('style');
-  style.textContent='.episode-dialogue-context{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.episode-dialogue-context b{display:block;font-size:12px;color:var(--ink);margin-bottom:7px}.episode-dialogue-line{font-size:14px;line-height:1.65;color:#475569;white-space:pre-wrap}.episode-dialogue-line+.episode-dialogue-line{margin-top:3px}.dialogue-target-word{color:#2563eb;font-weight:850}';
+  style.textContent='.episode-dialogue-context{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.episode-dialogue-context b{display:block;font-size:12px;color:var(--ink);margin-bottom:8px}.dialogue-pair+.dialogue-pair{margin-top:10px}.episode-dialogue-line{font-size:14px;line-height:1.6;color:#475569;white-space:normal}.episode-dialogue-ja{font-size:12px;line-height:1.55;color:#94a3b8;margin-top:2px}.dialogue-target-word{color:#2563eb;font-weight:850}';
   document.head.appendChild(style);
 
   function wordFromExample(example){
@@ -72,6 +72,14 @@
     document.querySelectorAll('.episode-context,.episode-source-row').forEach(el=>el.remove());
   }
 
+  function contextFor(x){
+    if(!x)return null;
+    const full=dialogueContext[x.w];
+    if(full)return {title:'前後のセリフ',pairs:full};
+    if(x.e)return {title:'本編の使用箇所',pairs:[{en:x.e,ja:x.j||''}]};
+    return null;
+  }
+
   function enrich(example){
     if(!example)return;
     const word=wordFromExample(example);
@@ -82,14 +90,14 @@
     const desiredLabel=x&&x._fullDialogue?'本編のセリフ（全文）':'本編で使われた表現';
     if(label&&label.textContent!==desiredLabel) label.textContent=desiredLabel;
 
-    const lines=dialogueContext[word];
+    const context=contextFor(x);
     const old=example.querySelector('.episode-dialogue-context');
-    if(!lines){if(old)old.remove();return}
-    if(old)return;
+    if(!context){if(old)old.remove();return}
+    if(old)old.remove();
 
     const box=document.createElement('div');
     box.className='episode-dialogue-context';
-    box.innerHTML='<b>前後のセリフ</b>'+lines.map(line=>'<div class="episode-dialogue-line">'+highlightTarget(line,word)+'</div>').join('');
+    box.innerHTML='<b>'+escapeHTML(context.title)+'</b>'+context.pairs.map(pair=>'<div class="dialogue-pair"><div class="episode-dialogue-line">'+highlightTarget(pair.en,word)+'</div>'+(pair.ja?'<div class="episode-dialogue-ja">'+escapeHTML(pair.ja)+'</div>':'')+'</div>').join('');
     example.appendChild(box);
   }
 
