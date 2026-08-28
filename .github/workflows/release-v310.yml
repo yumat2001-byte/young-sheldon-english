@@ -1,0 +1,53 @@
+name: Release v3.10 quiz feedback details
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v310.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Improve quiz feedback details
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p=Path('index.html')
+          s=p.read_text()
+          old='''answerNote.innerHTML='<b class="speakable" onclick="speakText(&quot;'+w.w.replace(/&/g,'&amp;').replace(/\\"/g,'&quot;')+'&quot;)">'+w.w+'</b><br>'+w.m+'<br><span class="small">'+w.d+'</span>';'''
+          new='''answerNote.innerHTML='<b class="speakable" onclick="speakText(&quot;'+w.w.replace(/&/g,'&amp;').replace(/\\"/g,'&quot;')+'&quot;)">'+w.w+'</b><br>'+w.m+'<div class="quiz-related">'+relatedHTML(w)+'</div>';'''
+          if old not in s:
+              raise SystemExit('quiz explanation marker missing')
+          s=s.replace(old,new,1)
+          if '<span class="pill version">v3.9</span>' not in s:
+              raise SystemExit('index v3.9 marker missing')
+          if '<script src="smart-tips.js?v=3.9"></script>' not in s:
+              raise SystemExit('smart tips cache marker missing')
+          s=s.replace('<span class="pill version">v3.9</span>','<span class="pill version">v3.10</span>',1)
+          s=s.replace('<script src="smart-tips.js?v=3.9"></script>','<script src="smart-tips.js?v=3.10"></script>',1)
+          p.write_text(s)
+
+          p=Path('smart-tips.js')
+          s=p.read_text()
+          if "v.textContent='v3.9'" not in s:
+              raise SystemExit('smart tips v3.9 marker missing')
+          s=s.replace("v.textContent='v3.9'","v.textContent='v3.10'",1)
+          marker='/* v3.10 quiz feedback related info */'
+          if marker not in s:
+              s += '''\n\n/* v3.10 quiz feedback related info */\n(function(){\n  const style=document.createElement('style');\n  style.textContent='.quiz-related{margin-top:10px;color:var(--ink)}.quiz-related .learn-row{font-size:14px;margin:7px 0}.quiz-related .usage{margin-top:10px;background:rgba(255,255,255,.7)}';\n  document.head.appendChild(style);\n})();\n'''
+          p.write_text(s)
+          PY
+      - name: Commit release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html smart-tips.js
+          git commit -m "Release v3.10 quiz feedback details" || exit 0
+          git push
