@@ -1,0 +1,68 @@
+name: Release v3.12 streamline study content
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v312.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove redundant Japanese explanation blocks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p=Path('index.html')
+          s=p.read_text()
+
+          old='<div class="meaning" id="meaning"></div><div class="detail-label">解説</div><div class="detail-desc" id="learnDesc"></div><div id="learnRelated"></div>'
+          new='<div class="meaning" id="meaning"></div><div id="learnRelated"></div>'
+          if old not in s:
+              raise SystemExit('study explanation block marker missing')
+          s=s.replace(old,new,1)
+
+          old='meaning.textContent=x.m;learnDesc.textContent=x.d;learnRelated.innerHTML=relatedHTML(x);'
+          new='meaning.textContent=x.m;learnRelated.innerHTML=relatedHTML(x);'
+          if old not in s:
+              raise SystemExit('renderWord explanation assignment marker missing')
+          s=s.replace(old,new,1)
+
+          old='.detail-desc{line-height:1.75;margin-top:9px}'
+          if old in s:
+              s=s.replace(old,'',1)
+
+          if '<span class="pill version">v3.11</span>' not in s:
+              raise SystemExit('index v3.11 marker missing')
+          if '<script src="smart-tips.js?v=3.11"></script>' not in s:
+              raise SystemExit('cache marker missing')
+          s=s.replace('<span class="pill version">v3.11</span>','<span class="pill version">v3.12</span>',1)
+          s=s.replace('<script src="smart-tips.js?v=3.11"></script>','<script src="smart-tips.js?v=3.12"></script>',1)
+          p.write_text(s)
+
+          p=Path('smart-tips.js')
+          s=p.read_text()
+          if "v.textContent='v3.11'" not in s:
+              raise SystemExit('smart tips v3.11 marker missing')
+          s=s.replace("v.textContent='v3.11'","v.textContent='v3.12'",1)
+
+          old='<div class="detail-label">解説</div><div class="detail-desc">'+"'+w.d+'"+'</div>'+"'+relatedHTML(w)+'"
+          new="'+relatedHTML(w)+'"
+          if old not in s:
+              raise SystemExit('review accordion explanation marker missing')
+          s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+      - name: Commit release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html smart-tips.js
+          git commit -m "Release v3.12 streamline study content" || exit 0
+          git push
