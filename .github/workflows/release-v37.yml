@@ -26,24 +26,8 @@ jobs:
               raise SystemExit('smart-tips v3.6 version marker missing')
           s=s.replace(old,"document.querySelectorAll('.version').forEach(v=>v.textContent='v3.7');",1)
 
-          old_block="""    const title=quiz.querySelector('.row b');
-    if(title)title.textContent='TEST';
-  }
-"""
-          new_block="""    const title=quiz.querySelector('.row b');
-    if(title)title.textContent='TEST';
-    const next=document.getElementById('quizNext');
-    if(next){
-      next.classList.remove('fixed-next');
-      next.classList.add('quiz-next-inline');
-      next.style.position='static';
-      next.style.width='100%';
-      next.style.minWidth='0';
-      next.style.marginTop='18px';
-      next.style.boxShadow='none';
-    }
-  }
-"""
+          old_block="    const title=quiz.querySelector('.row b');\n    if(title)title.textContent='TEST';\n  }\n"
+          new_block="    const title=quiz.querySelector('.row b');\n    if(title)title.textContent='TEST';\n    const next=document.getElementById('quizNext');\n    if(next){\n      next.classList.remove('fixed-next');\n      next.classList.add('quiz-next-inline');\n      next.style.position='static';\n      next.style.width='100%';\n      next.style.minWidth='0';\n      next.style.marginTop='18px';\n      next.style.boxShadow='none';\n    }\n  }\n"
           if old_block not in s:
               raise SystemExit('quiz block marker missing')
           s=s.replace(old_block,new_block,1)
