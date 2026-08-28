@@ -1,0 +1,60 @@
+name: Apply v3.0 consolidated update
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply v3.0
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          # Version
+          for v in ['v2.6','v2.7','v2.8','v2.9']:
+              s=s.replace('<span class="pill version">'+v+'</span>','<span class="pill version">v3.0</span>',1)
+          # SET chooser
+          marker='<section id="settings" class="screen">'
+          chooser='<section id="setActions" class="screen"><button class="back" onclick="openEpisode()">← Episode 1</button><div class="card"><div class="small">EPISODE 1</div><h2 id="setActionTitle">SET 1 · 10語</h2><p class="small">このSETで行う内容を選択してください。</p><button onclick="startChosenSetStudy()">STUDY · この10語を学習</button><button class="secondary" onclick="startChosenSetTest()">TEST · この10語だけテスト</button></div></section>'
+          if 'id="setActions"' not in s:
+              s=s.replace(marker,chooser+marker,1)
+          old="function startCurrentSet(){startSet(currentSetNo())}function startSet(n){studyWords=words.slice((n-1)*SET_SIZE,n*SET_SIZE);idx=0;studyMode='set';show('learn');renderWord();speakText(studyWords[0].w)}"
+          new="function startCurrentSet(){beginSetStudy(currentSetNo())}function beginSetStudy(n){studyWords=words.slice((n-1)*SET_SIZE,n*SET_SIZE);idx=0;studyMode='set';show('learn');renderWord();speakText(studyWords[0].w)}function startSet(n){currentSet=n;setActionTitle.textContent='SET '+n+' · '+words.slice((n-1)*SET_SIZE,n*SET_SIZE).length+'語';show('setActions')}function startChosenSetStudy(){beginSetStudy(currentSet)}function startChosenSetTest(){startQuiz(words.slice((currentSet-1)*SET_SIZE,currentSet*SET_SIZE))}"
+          if old in s: s=s.replace(old,new,1)
+          # REVIEW word lists
+          anchor='<button id="studyWrongBtn" onclick="startWrongStudy()"></button><button class="secondary" onclick="openEpisode()">Episode 1へ戻る</button>'
+          if 'id="reviewWordLists"' not in s:
+              s=s.replace(anchor,'<button id="studyWrongBtn" onclick="startWrongStudy()"></button><div id="reviewWordLists"></div><button class="secondary" onclick="openEpisode()">Episode 1へ戻る</button>',1)
+          # Track correct group
+          s=s.replace("currentWrong=[],detailIndex=0,studyMode='set',questionAnswered=false","currentWrong=[],currentCorrect=[],detailIndex=0,studyMode='set',questionAnswered=false",1)
+          # startQuiz reset correct group
+          s=s.replace("qidx=0;score=0;answered=0;currentWrong=[];questionAnswered=false","qidx=0;score=0;answered=0;currentWrong=[];currentCorrect=[];questionAnswered=false",1)
+          # Answer: first try determines score; normal test promotes one level, retest never promotes.
+          a=s.find('function answer(btn,m,x){')
+          b=s.find('function nextQuiz()',a)
+          if a<0 or b<0: raise SystemExit('answer boundary missing')
+          answer="function answer(btn,m,x){if(questionAnswered){showOptionExplanation(m,m===x.m?'correct':'wrong');if(m===x.m){feedback.innerHTML='<div class=\"example-text\">'+x.e+'</div><div class=\"example-ja\">'+x.j+'</div>';feedback.classList.remove('hidden')}else feedback.classList.add('hidden');return}if(m!==x.m){if(btn.classList.contains('wrong')){showOptionExplanation(m,'wrong');return}btn.classList.add('wrong');if(!currentWrong.includes(x.w))currentWrong.push(x.w);currentCorrect=currentCorrect.filter(w=>w!==x.w);setMasteryWord(x.w,'苦手');showOptionExplanation(m,'wrong');return}questionAnswered=true;answered++;if(!currentWrong.includes(x.w)){score++;if(!currentCorrect.includes(x.w))currentCorrect.push(x.w)}btn.classList.add('correct');if(quizMode!=='retest')promote(x.w);save();showOptionExplanation(x.m,'correct');feedback.innerHTML='<div class=\"example-text\">'+x.e+'</div><div class=\"example-ja\">'+x.j+'</div>';feedback.classList.remove('hidden');quizNext.classList.remove('hidden')}"
+          s=s[:a]+answer+s[b:]
+          # Review renderer and lists
+          insert=s.find('function updateStats(){')
+          helper="function reviewWordRow(w){let i=words.findIndex(x=>x.w===w.w);return '<div class=\"list-item\" onclick=\"openDetail('+i+')\"><div class=\"list-word speakable\" onclick=\"event.stopPropagation();speakText(\\\''+w.w.replace(/'/g,\"\\\\'\")+'\\\')\">'+w.w+'</div><div class=\"list-meaning\">'+w.m+'</div></div>'}function renderReviewLists(){if(!document.getElementById('reviewWordLists'))return;let wrong=quizWords.filter(x=>currentWrong.includes(x.w)),correct=quizWords.filter(x=>!currentWrong.includes(x.w));reviewWordLists.innerHTML='<div class=\"detail-label\">間違えた単語　'+wrong.length+'語</div>'+(wrong.length?wrong.map(reviewWordRow).join(''):'<p class=\"small\">なし</p>')+'<div class=\"detail-label\">正解した単語　'+correct.length+'語</div>'+(correct.length?correct.map(reviewWordRow).join(''):'<p class=\"small\">なし</p>')}"
+          if 'function renderReviewLists()' not in s: s=s[:insert]+helper+s[insert:]
+          # Render lists when review opens.
+          s=s.replace("else{syncUnlock();save();show('review')}","else{syncUnlock();save();show('review');renderReviewLists()}",1)
+          # Score denominator is total tested words, not eventual correct clicks.
+          s=s.replace("scoreStat.textContent=answered?Math.round(score/answered*100)+'%':'0%'","scoreStat.textContent=quizWords.length?Math.round(score/quizWords.length*100)+'%':'0%'",1)
+          p.write_text(s)
+          PY
+      - name: Commit
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Apply v3.0 consolidated learning and review updates"
+          git push
