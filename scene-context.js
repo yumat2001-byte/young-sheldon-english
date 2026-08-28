@@ -1,8 +1,8 @@
-/* v3.19 dialogue context: remove scene summaries; prefer complete spoken lines. */
+/* v3.19 dialogue context: no scene summaries, no misleading fragment-as-sentence display. */
 (function(){
   const sourceUrl='https://transcripts.foreverdreaming.org/viewtopic.php?t=32113';
 
-  /* Only replace an excerpt when we have verified the complete spoken line. */
+  /* Verified complete spoken lines only. */
   const verifiedFullLines={
     adopted:{en:"He's adopted.",ja:'彼は養子だ'},
     allergy:{en:'Are you crying or having an allergy attack?',ja:'泣いてるの？ それともアレルギー発作？'}
@@ -11,7 +11,7 @@
   if(typeof words!=='undefined'){
     words.forEach(x=>{
       const full=verifiedFullLines[x.w];
-      if(full){x.e=full.en;x.j=full.ja}
+      if(full){x.e=full.en;x.j=full.ja;x._fullDialogue=true}
     });
   }
 
@@ -31,17 +31,32 @@
     return null;
   }
 
+  function cleanOldSceneBoxes(){
+    document.querySelectorAll('.episode-context').forEach(el=>el.remove());
+  }
+
   function enrich(example){
-    if(!example||example.querySelector('.episode-source-row'))return;
+    if(!example)return;
     const word=wordFromExample(example);
     if(!word)return;
+    const x=(typeof words!=='undefined')?words.find(v=>v.w===word):null;
+
+    /* Never label a stored fragment as a full dialogue sentence. */
+    const label=example.querySelector('.small');
+    if(label) label.textContent=x&&x._fullDialogue?'本編のセリフ（全文）':'本編で使われた表現';
+
+    if(example.querySelector('.episode-source-row'))return;
     const row=document.createElement('div');
     row.className='episode-source-row';
     row.innerHTML='<a class="episode-source" href="'+sourceUrl+'" target="_blank" rel="noopener">前後のセリフを確認</a>';
     example.appendChild(row);
   }
 
-  function scan(){document.querySelectorAll('.example:not(.hidden)').forEach(enrich)}
+  function scan(){
+    cleanOldSceneBoxes();
+    document.querySelectorAll('.example:not(.hidden)').forEach(enrich);
+  }
+
   const mo=new MutationObserver(()=>scan());
   mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
   scan();
