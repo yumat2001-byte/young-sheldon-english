@@ -53,3 +53,96 @@
   const oldRender=window.renderWord;
   if(typeof oldRender==='function')window.renderWord=function(){oldRender.apply(this,arguments);const b=ensureBox('learnRelated','learnMemoryTip');paint(b,currentLearnWord());};
 })();
+
+/* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
+(function(){
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.6');
+
+  const settings=document.getElementById('settings');
+  if(settings&&!document.getElementById('setChoice')){
+    const section=document.createElement('section');
+    section.id='setChoice';
+    section.className='screen';
+    section.innerHTML='<button class="back" onclick="openEpisode()">← Episode 1</button><div class="card"><div class="small">Episode 1</div><h2 id="setChoiceTitle">SET 1</h2><p class="small" id="setChoiceProgress"></p><button onclick="studyChosenSet()">学習する</button><button class="secondary" onclick="testChosenSet()">テストする</button></div>';
+    settings.insertAdjacentElement('beforebegin',section);
+  }
+
+  const quiz=document.getElementById('quiz');
+  if(quiz&&!quiz.querySelector('.quiz-back')){
+    const back=document.createElement('button');
+    back.className='back quiz-back';
+    back.textContent='← 戻る';
+    back.onclick=()=>exitQuiz();
+    quiz.insertAdjacentElement('afterbegin',back);
+    const title=quiz.querySelector('.row b');
+    if(title)title.textContent='TEST';
+  }
+
+  let chosenSet=1;
+  let quizReturn='settings';
+
+  function shuffledDifferent(items){
+    const source=[...items],out=[...items];
+    for(let i=out.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [out[i],out[j]]=[out[j],out[i]];
+    }
+    if(out.length>1&&out.every((x,i)=>x===source[i]))[out[0],out[1]]=[out[1],out[0]];
+    return out;
+  }
+
+  window.openSet=function(n){
+    chosenSet=n;
+    const chunk=words.slice((n-1)*SET_SIZE,n*SET_SIZE);
+    const done=chunk.filter(mastered).length;
+    document.getElementById('setChoiceTitle').textContent='SET '+n;
+    document.getElementById('setChoiceProgress').textContent=done+' / '+chunk.length+'語 習得';
+    show('setChoice');
+  };
+
+  window.studyChosenSet=function(){beginSetStudy(chosenSet)};
+  window.testChosenSet=function(){
+    const chunk=words.slice((chosenSet-1)*SET_SIZE,chosenSet*SET_SIZE);
+    startQuiz(chunk,'set','setChoice');
+  };
+  window.startSet=function(n){openSet(n)};
+
+  window.openEpisode=function(){
+    syncUnlock();
+    const sets=Math.ceil(words.length/SET_SIZE),m=words.filter(mastered).length;
+    document.getElementById('epWordCount').textContent=words.length+' words';
+    document.getElementById('epProgress').style.width=(m/words.length*100)+'%';
+    document.getElementById('epProgressText').textContent=m+' / '+words.length+'語 習得';
+    let html='';
+    for(let i=1;i<=sets;i++){
+      const chunk=words.slice((i-1)*SET_SIZE,i*SET_SIZE),done=chunk.filter(mastered).length,ring=setRing(chunk);
+      html+='<div class="set-row" onclick="openSet('+i+')"><div class="set-num" style="background:'+ring+'"><span>'+i+'</span></div><div class="set-info"><b>SET '+i+'</b><span>'+done+' / '+chunk.length+'語 習得</span></div><div class="set-state">'+(done===chunk.length?'✓':'›')+'</div></div>';
+    }
+    document.getElementById('setList').innerHTML=html;
+    show('episode');
+  };
+
+  const originalBuildQuiz=window.buildQuiz;
+  window.startQuiz=function(custom,mode,returnTo){
+    quizMode=mode||'normal';
+    quizReturn=returnTo||(custom?'episode':'settings');
+    const base=custom?[...custom]:originalBuildQuiz();
+    quizWords=shuffledDifferent(base);
+    qidx=0;score=0;currentWrong=[];questionAnswered=false;
+    show('quiz');
+    renderQuiz();
+  };
+
+  window.exitQuiz=function(){
+    if(quizReturn==='setChoice')openSet(chosenSet);
+    else if(quizReturn==='review'){show('review');renderReviewLists()}
+    else if(quizReturn==='episode')openEpisode();
+    else show('settings');
+  };
+
+  window.startWrongRetest=function(){
+    const retry=words.filter(x=>currentWrong.includes(x.w));
+    if(!retry.length){alert('今回のテストで間違えた単語はありません');return}
+    startQuiz(retry,'retest','review');
+  };
+})();
