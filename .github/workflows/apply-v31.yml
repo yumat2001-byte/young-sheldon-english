@@ -1,0 +1,45 @@
+name: Apply v3.1 learning UX
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Improve learning UX
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html'); s=p.read_text()
+          s=s.replace('<span class="pill version">v3.0</span>','<span class="pill version">v3.1</span>',1)
+          # Visual polish for review grouping and tappable audio affordance.
+          s=s.replace('.list-meaning{font-size:13px;color:var(--muted);margin-top:3px}', '.list-meaning{font-size:13px;color:var(--muted);margin-top:3px}.review-group{margin-top:20px}.review-head{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:850;padding:10px 0;border-bottom:1px solid var(--line)}.review-head.bad{color:var(--bad)}.review-head.good{color:var(--good)}.tap-hint{font-size:11px;color:var(--muted);font-weight:600}',1)
+          # Make episode title hierarchy cleaner.
+          s=s.replace('<b>Episode 1 · Pilot</b><span id="epMeta"></span>','<b>Episode 1</b><span>Pilot · <span id="epMeta"></span></span>',1)
+          s=s.replace('<h2 style="margin:3px 0">Episode 1 · Pilot</h2>','<h2 style="margin:3px 0">Episode 1</h2><div class="small" style="font-size:15px">Pilot</div>',1)
+          # Add a concise audio hint in quiz without cluttering choices.
+          s=s.replace('<div class="word" id="quizWord" onclick="speakText(quizWords[qidx].w)"></div><div id="options">','<div class="word" id="quizWord" onclick="speakText(quizWords[qidx].w)"></div><div class="tap-hint">単語をタップで発音</div><div id="options">',1)
+          # Review rows: clearer sections; tap English = audio, row = detail.
+          a=s.find('function reviewWordRow('); b=s.find('function renderReview()',a)
+          if a>=0 and b>=0:
+              row="function reviewWordRow(w){let i=words.findIndex(x=>x.w===w.w);return '<div class=\"list-item\" onclick=\"detailIndex='+i+';renderDetail();show(\\\'detail\\\')\"><div class=\"row\"><div><div class=\"list-word speakable\" onclick=\"event.stopPropagation();speakText(\\\''+w.w.replace(/'/g,\"\\\\'\")+'\\\')\">'+w.w+'</div><div class=\"list-meaning\">'+w.m+'</div></div><span class=\"tap-hint\">発音 ▶</span></div></div>'}"
+              s=s[:a]+row+s[b:]
+          # Replace review labels with visually distinct groups if renderer exists.
+          s=s.replace("reviewWordLists.innerHTML='<div class=\"detail-label\">間違えた単語　'+wrong.length+'語</div>'+(wrong.length?wrong.map(w=>reviewWordRow(w,true)).join(''):'<p class=\"small\">なし</p>')+'<div class=\"detail-label\">正解した単語　'+correct.length+'語</div>'+(correct.length?correct.map(w=>reviewWordRow(w,false)).join(''):'<p class=\"small\">なし</p>')", "reviewWordLists.innerHTML='<div class=\"review-group\"><div class=\"review-head bad\"><span>間違えた単語</span><span>'+wrong.length+'語</span></div>'+(wrong.length?wrong.map(w=>reviewWordRow(w)).join(''):'<p class=\"small\">なし</p>')+'</div><div class=\"review-group\"><div class=\"review-head good\"><span>正解した単語</span><span>'+correct.length+'語</span></div>'+(correct.length?correct.map(w=>reviewWordRow(w)).join(''):'<p class=\"small\">なし</p>')+'</div>'")
+          # Today should prioritize weak words, then fuzzy, then unseen; avoid already-mastered words when alternatives exist.
+          old="function todayWords(){syncUnlock();let available=words.slice(0,state.unlockedSet*SET_SIZE),sorted=[...available].sort((a,b)=>rank(a.w)-rank(b.w));return sorted.slice(0,Math.min(10,sorted.length))}"
+          new="function todayWords(){syncUnlock();let available=words.slice(0,state.unlockedSet*SET_SIZE),priority={'苦手':0,'うろ覚え':1,'未学習':2,'ほぼ覚えた':3,'覚えた':4},sorted=[...available].sort((a,b)=>priority[masteryOf(a.w)]-priority[masteryOf(b.w)]);return sorted.slice(0,Math.min(10,sorted.length))}"
+          if old in s:s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+      - name: Commit
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Improve review clarity and learning flow"
+          git push
