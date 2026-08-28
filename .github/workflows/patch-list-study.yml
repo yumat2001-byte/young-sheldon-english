@@ -14,43 +14,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch v3.2
+      - name: Remove Pilot label
         run: |
           python - <<'PY'
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text()
-
-          # Version label
-          s=s.replace('<span class="pill version">v3.1</span>','<span class="pill version">v3.2</span>',1)
-
-          # SET tap starts STUDY directly; TEST remains in TEST tab.
-          s=s.replace("function startSet(n){currentSet=n;setActionTitle.textContent='SET '+n+' · '+words.slice((n-1)*SET_SIZE,n*SET_SIZE).length+'語';show('setActions')}","function startSet(n){beginSetStudy(n)}",1)
-
-          # Restore the useful credentials plural usage note without deleting the existing explanation.
-          old="W('credentials','/krəˈdenʃəlz/','資格・経歴・実績','能力や立場を証明する学歴・職歴・資格・実績など。'"
-          new="W('credentials','/krəˈdenʃəlz/','資格・経歴・実績','能力や立場を証明する学歴・職歴・資格・実績など。credential の複数形。人の資格・経歴・実績をまとめて表すこの意味では credentials と複数形で使われることが多い。'"
-          s=s.replace(old,new,1)
-
-          # LIST and REVIEW word taps reuse the STUDY screen.
-          old="function showList(){listCount.textContent=words.length+' words';wordList.innerHTML=words.map((x,i)=>'<div class=\"list-item\" onclick=\"openDetail('+i+')\"><div class=\"row\"><span class=\"list-word\">'+x.w+'</span><span class=\"mastery\" data-level=\"'+masteryOf(x.w)+'\">'+masteryOf(x.w)+'</span></div><div class=\"list-meaning\">'+x.m+'　'+x.p+'</div></div>').join('');show('list')}"
-          new="function showList(){listCount.textContent=words.length+' words';wordList.innerHTML=words.map((x,i)=>'<div class=\"list-item\" onclick=\"studySingleWord('+i+')\"><div class=\"row\"><span class=\"list-word\">'+x.w+'</span><span class=\"mastery\" data-level=\"'+masteryOf(x.w)+'\">'+masteryOf(x.w)+'</span></div><div class=\"list-meaning\">'+x.m+'　'+x.p+'</div></div>').join('');show('list')}function studySingleWord(i){studyWords=[words[i]];idx=0;studyMode='single';show('learn');renderWord();speakText(words[i].w)}"
-          s=s.replace(old,new,1)
-          s=s.replace("return '<div class=\"list-item\" onclick=\"openDetail('+i+')\">","return '<div class=\"list-item\" onclick=\"studySingleWord('+i+')\">",1)
-
-          # Single-word study returns to LIST instead of Episode.
-          s=s.replace("else if(studyMode==='set'){startQuiz(studyWords)}else openEpisode()}","else if(studyMode==='single'){showList()}else if(studyMode==='set'){startQuiz(studyWords)}else openEpisode()}",1)
-
-          # Load contextual v3.2 tips after the main app has initialized.
-          if 'src="v3.2-upgrade.js"' not in s:
-              s=s.replace('</body></html>','<script src="v3.2-upgrade.js"></script></body></html>',1)
-
+          s=s.replace('<span>Pilot · <span id="epMeta"></span></span>','<span><span id="epMeta"></span></span>',1)
+          s=s.replace('<div class="small" style="font-size:15px">Pilot</div>','',1)
           p.write_text(s)
           PY
-      - name: Commit v3.2
+      - name: Commit update
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "Release v3.2 learning upgrade"
+          git diff --cached --quiet || git commit -m "Remove Pilot from Episode 1"
           git push
