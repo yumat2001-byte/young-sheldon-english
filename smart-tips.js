@@ -56,7 +56,7 @@
 
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.18');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.19');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){

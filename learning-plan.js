@@ -1,4 +1,4 @@
-/* Young Sheldon English v3.18 — subtitle-free learning priorities */
+/* Young Sheldon English v3.19 — subtitle-free learning priorities */
 (function(){
   const tiers={
     core:['business','backup','professional','principle','adopted','financial','reassuring','harass','torment','gullible','intimidated','exposed','thorough','allergy','despite','account','breach','pursue','recruit','reputation','uncertainty','assaulted','retaliate','extreme','argument','marriage','license','recognize','accuse','intelligence','principal','uniform','supplies','complicated','fired','deserve','afford','private','comforting','pregnant'],
