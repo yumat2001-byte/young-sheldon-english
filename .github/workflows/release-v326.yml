@@ -1,0 +1,43 @@
+name: Release v3.26 isolated build
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v326.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build isolated v3.26
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          files=['index.html','smart-tips.js','scene-context.js','learning-plan.js']
+          for name in files:
+              p=Path(name)
+              if not p.exists():
+                  raise SystemExit(f'missing {name}')
+              s=p.read_text()
+              for old in ['v3.25','v3.24','v3.23','v3.22','v3.21','v3.20','v3.19']:
+                  s=s.replace(old,'v3.26')
+              if name=='index.html' and 'http-equiv="Cache-Control"' not in s:
+                  s=s.replace('<meta charset="utf-8">','<meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">',1)
+              p.write_text(s)
+          out=Path('v3.26')
+          out.mkdir(exist_ok=True)
+          for name in files:
+              (out/name).write_text(Path(name).read_text())
+          PY
+      - name: Commit release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html smart-tips.js scene-context.js learning-plan.js v3.26/
+          git commit -m "Release v3.26 isolated cache-safe build" || exit 0
+          git push
