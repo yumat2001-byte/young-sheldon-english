@@ -56,7 +56,7 @@
 
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.26');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.27');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){
@@ -132,11 +132,12 @@
     show('episode');
   };
 
-  const originalBuildQuiz=window.buildQuiz;
   window.startQuiz=function(custom,mode,returnTo){
     quizMode=mode||'normal';
     quizReturn=returnTo||(custom?'episode':'settings');
-    const base=custom?[...custom]:originalBuildQuiz();
+    // Resolve at quiz start so learning-plan.js can supply the active
+    // priority/scope-aware builder even though it loads after this file.
+    const base=custom?[...custom]:window.buildQuiz();
     quizWords=shuffledDifferent(base);
     qidx=0;score=0;currentWrong=[];questionAnswered=false;
     show('quiz');

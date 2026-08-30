@@ -1,4 +1,4 @@
-/* Young Sheldon English v3.26 — subtitle-free learning priorities */
+/* Young Sheldon English v3.27 — subtitle-free learning priorities */
 (function(){
   const tiers={
     core:['business','backup','professional','principle','adopted','financial','reassuring','harass','torment','gullible','intimidated','exposed','thorough','allergy','despite','account','breach','pursue','recruit','reputation','uncertainty','assaulted','retaliate','extreme','argument','marriage','license','recognize','accuse','intelligence','principal','uniform','supplies','complicated','fired','deserve','afford','private','comforting','pregnant'],
@@ -39,6 +39,16 @@
   todayWords=function(){
     const done=x=>masteryOf(x.w)==='覚えた'?1:0;
     return [...words].sort((a,b)=>done(a)-done(b)||rank[tierOf(a.w)]-rank[tierOf(b.w)]||rankMastery(a)-rankMastery(b)||(episodeHits[b.w]||1)-(episodeHits[a.w]||1)).slice(0,Math.min(10,words.length));
+  };
+
+  // Read-only release diagnostics: SETs, TODAY and tests must consume this
+  // same sorted words array and the same priority-aware pool.
+  window.learningPlanDebug={
+    version:'v3.27',
+    orderedWords:()=>words.map(x=>x.w),
+    todayWords:()=>todayWords().map(x=>x.w),
+    quizScope:()=>state.quizScope,
+    quizPool:()=>quizPool().map(x=>x.w)
   };
 
   const oldOpenEpisode=openEpisode;
