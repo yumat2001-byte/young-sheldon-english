@@ -1,4 +1,4 @@
-/* Young Sheldon English v3.28 — subtitle-free learning priorities */
+/* Young Sheldon English v3.30 — subtitle-free learning priorities */
 (function(){
   const tiers={
     core:['business','backup','professional','principle','adopted','financial','reassuring','harass','torment','gullible','intimidated','exposed','thorough','allergy','despite','account','breach','pursue','recruit','reputation','uncertainty','assaulted','retaliate','extreme','argument','marriage','license','recognize','accuse','intelligence','principal','uniform','supplies','complicated','fired','deserve','afford','private','comforting','pregnant'],
@@ -47,7 +47,7 @@
   // Read-only release diagnostics: SETs, TODAY and tests must consume this
   // same sorted words array and the same priority-aware pool.
   window.learningPlanDebug={
-    version:'v3.28',
+    version:'v3.30',
     orderedWords:()=>words.map(x=>x.w),
     todayWords:()=>todayWords().map(x=>x.w),
     quizScope:()=>state.quizScope,

@@ -56,7 +56,7 @@
 
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.28');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.30');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){
@@ -157,6 +157,27 @@
     startQuiz(retry,'retest','review');
   };
 })();
+
+/* v3.30: high-contrast SET progress rings */
+(function(){
+  window.setRing=function(chunk){
+    const colors={'苦手':'#EF4444','うろ覚え':'#F59E0B','ほぼ覚えた':'#3B82F6','覚えた':'#22C55E','未学習':'#D1D5DB'};
+    const order=['覚えた','ほぼ覚えた','うろ覚え','苦手','未学習'];
+    const total=chunk.length;let start=0;const parts=[];
+    order.forEach(level=>{const n=chunk.filter(x=>masteryOf(x.w)===level).length;if(!n)return;const end=start+n/total*360;parts.push(colors[level]+' '+start+'deg '+end+'deg');start=end});
+    return 'conic-gradient('+parts.join(',')+')';
+  };
+
+  const setList=document.getElementById('setList');
+  if(setList&&!document.getElementById('setRingLegend')){
+    const legend=document.createElement('div');legend.id='setRingLegend';legend.className='set-ring-legend';
+    legend.innerHTML='<span><i class="known"></i>覚えた</span><span><i class="almost"></i>ほぼ</span><span><i class="fuzzy"></i>うろ覚え</span><span><i class="weak"></i>苦手</span>';
+    setList.insertAdjacentElement('beforebegin',legend);
+  }
+  const style=document.createElement('style');
+  style.textContent='.set-ring-legend{display:flex;flex-wrap:wrap;gap:8px 12px;margin:10px 0 3px;color:#64748b;font-size:11px;font-weight:700}.set-ring-legend span{display:flex;align-items:center;gap:5px}.set-ring-legend i{width:9px;height:9px;border-radius:50%}.set-ring-legend .known{background:#22C55E}.set-ring-legend .almost{background:#3B82F6}.set-ring-legend .fuzzy{background:#F59E0B}.set-ring-legend .weak{background:#EF4444}';
+  document.head.appendChild(style);
+})();
 /* v3.8 result-page word accordion */
 (function(){
   const style=document.createElement('style');
@@ -225,5 +246,42 @@
 (function(){
   const style=document.createElement('style');
   style.textContent='.quiz-related{margin-top:10px;color:var(--ink)}.quiz-related .learn-row{font-size:14px;margin:7px 0}.quiz-related .usage{margin-top:10px;background:rgba(255,255,255,.7)}';
+  document.head.appendChild(style);
+})();
+
+/* v3.29: grammar-matched quiz choices */
+(function(){
+  const groups={
+    noun:['nourishment','credentials','violation','business','backup','principle','kinematics','intellect','allergy','account','subsection','breach','hygiene','faculty','reputation','uncertainty','haven','handbook','argument','marriage','freshman','license','fad','ammonia','homeroom','attire','grooming','blouse','intelligence','sonata','calculus','geometry','pitch','musician','principal','uniform','supplies','grip','justice'],
+    verb:['harass','torment','pursue','recruit','retaliate','recognize','accuse','rat out','deserve','afford'],
+    modifier:['revolting','gifted','dimwitted','remarkably','arranged','theoretical','professional','unbalanced','scientific','adopted','financial','reassuring','maliciously','gullible','intimidated','exposed','thorough','despite','designated','diaphanous','assaulted','admirable','extreme','prime','Euclidean','ordinary','complicated','fired','private','comforting','pregnant']
+  };
+  const labels={noun:'名詞',verb:'動詞',modifier:'修飾語'};
+  const byWord={};Object.entries(groups).forEach(([group,list])=>list.forEach(w=>byWord[w]=group));
+  const groupOf=w=>byWord[w]||'noun';
+  const shuffle=list=>{
+    const out=[...list];
+    for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}
+    return out;
+  };
+
+  window.renderQuiz=function(){
+    questionAnswered=false;
+    const x=quizWords[qidx],group=groupOf(x.w);
+    quizCount.textContent=(qidx+1)+' / '+quizWords.length;
+    quizWord.textContent=x.w;
+    answerNote.className='answer-note hidden';feedback.classList.add('hidden');quizNext.classList.add('hidden');
+    let badge=document.getElementById('quizPartOfSpeech');
+    if(!badge){badge=document.createElement('div');badge.id='quizPartOfSpeech';badge.className='quiz-pos';quizWord.insertAdjacentElement('afterend',badge)}
+    badge.textContent=labels[group]||'同じ品詞';
+    let candidates=shuffle(words.filter(w=>w.w!==x.w&&groupOf(w.w)===group&&w.m!==x.m));
+    if(candidates.length<3)candidates.push(...shuffle(words.filter(w=>w.w!==x.w&&!candidates.includes(w)&&w.m!==x.m)));
+    const pool=shuffle([x,...candidates.slice(0,3)]);
+    options.innerHTML='';
+    pool.forEach(w=>{const b=document.createElement('button');b.className='option';b.textContent=w.m;b.onclick=()=>answer(b,w,x);options.appendChild(b)});
+  };
+
+  const style=document.createElement('style');
+  style.textContent='.quiz-pos{display:inline-block;margin:0 0 5px;padding:5px 9px;border-radius:999px;background:#eef2f7;color:#64748b;font-size:12px;font-weight:800}';
   document.head.appendChild(style);
 })();
