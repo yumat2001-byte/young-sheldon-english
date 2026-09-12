@@ -1,6 +1,6 @@
-/* Young Sheldon English v3.30 — subtitle-free learning priorities */
+/* Young Sheldon English v3.32 — subtitle-free learning priorities */
 (function(){
-  const tiers={
+  const tiers=window.YS_EPISODE?.tiers||{
     core:['business','backup','professional','principle','adopted','financial','reassuring','harass','torment','gullible','intimidated','exposed','thorough','allergy','despite','account','breach','pursue','recruit','reputation','uncertainty','assaulted','retaliate','extreme','argument','marriage','license','recognize','accuse','intelligence','principal','uniform','supplies','complicated','fired','deserve','afford','private','comforting','pregnant'],
     plus:['nourishment','revolting','credentials','violation','gifted','remarkably','arranged','theoretical','scientific','intellect','designated','hygiene','faculty','admirable','handbook','freshman','homeroom','grooming','musician','ordinary'],
     extra:['dimwitted','kinematics','unbalanced','maliciously','diaphanous','subsection','haven','prime','fad','ammonia','attire','blouse','sonata','calculus','Euclidean','geometry','pitch','grip','rat out','justice']
@@ -8,7 +8,7 @@
   const labels={core:'CORE',plus:'PLUS',extra:'EXTRA'};
   const jp={core:'最優先',plus:'次に覚える',extra:'低優先'};
   const rank={core:0,plus:1,extra:2};
-  const episodeHits={adopted:3,grooming:3,business:2,violation:2,intimidated:2,ammonia:2,sonata:2,Euclidean:2,fired:2,allergy:2};
+  const episodeHits=window.YS_EPISODE?.hits||{adopted:3,grooming:3,business:2,violation:2,intimidated:2,ammonia:2,sonata:2,Euclidean:2,fired:2,allergy:2};
   const tierByWord={}; Object.entries(tiers).forEach(([k,a])=>a.forEach(w=>tierByWord[w]=k));
   const tierOf=w=>tierByWord[w]||'extra';
   const originalOrder=new Map(words.map((x,i)=>[x.w,i]));
@@ -25,14 +25,13 @@
   const oldQuizPool=quizPool;
   quizPool=function(){
     syncUnlock();
-    let base=scopeWords();
-    let learned=base.filter(x=>state.learned.includes(x.w)||masteryOf(x.w)!=='未学習');
-    return learned.length>=4?learned:base;
+    return scopeWords();
   };
   buildQuiz=function(){
-    let base=quizPool(),pool=[...base].sort((a,b)=>rank[tierOf(a.w)]-rank[tierOf(b.w)]||rankMastery(a)-rankMastery(b)||(episodeHits[b.w]||1)-(episodeHits[a.w]||1)),out=[];
-    while(out.length<state.quizCount){out.push(...pool);pool=[...base].sort(()=>Math.random()-.5)}
-    return out.slice(0,state.quizCount)
+    const base=quizPool();
+    return [...base]
+      .sort((a,b)=>rankMastery(a)-rankMastery(b)||rank[tierOf(a.w)]-rank[tierOf(b.w)]||(episodeHits[b.w]||1)-(episodeHits[a.w]||1)||originalOrder.get(a.w)-originalOrder.get(b.w))
+      .slice(0,Math.min(state.quizCount,base.length));
   };
   function rankMastery(x){return {'苦手':0,'うろ覚え':1,'未学習':2,'ほぼ覚えた':3,'覚えた':4}[masteryOf(x.w)]}
 
@@ -47,7 +46,7 @@
   // Read-only release diagnostics: SETs, TODAY and tests must consume this
   // same sorted words array and the same priority-aware pool.
   window.learningPlanDebug={
-    version:'v3.30',
+    version:'v3.32',
     orderedWords:()=>words.map(x=>x.w),
     todayWords:()=>todayWords().map(x=>x.w),
     quizScope:()=>state.quizScope,

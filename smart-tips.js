@@ -28,6 +28,8 @@
   ];
   function tipFor(x){
     if(!x||!x.w)return null;
+    // Episode 2 has reviewed word-family entries; do not infer roots by spelling.
+    if(window.YS_EPISODE?.number===2)return null;
     if(trivia[x.w])return trivia[x.w];
     const p=autoParts.find(p=>p.re.test(x.w));
     return p?{title:'WORD PARTS · '+p.label,html:p.text}:null;
@@ -54,9 +56,62 @@
   if(typeof oldRender==='function')window.renderWord=function(){oldRender.apply(this,arguments);const b=ensureBox('learnRelated','learnMemoryTip');paint(b,currentLearnWord());};
 })();
 
+/* v3.32: simplified HOME and a separate weak-word test */
+(function(){
+  const todayCard=document.querySelector('#home .today');
+  if(todayCard)todayCard.classList.add('hidden');
+
+  const statsCard=document.querySelector('#home .card:not(.today)');
+  if(statsCard){
+    const title=statsCard.querySelector(':scope > b');
+    if(title){
+      const row=document.createElement('div');row.className='row home-status-title';
+      title.replaceWith(row);row.append(title);
+      const version=document.createElement('span');version.className='pill version';version.textContent='v3.32';row.append(version);
+    }
+  }
+
+  const settings=document.getElementById('settings');
+  const normalCard=settings&&settings.querySelector('.card');
+  if(settings&&normalCard&&!document.getElementById('weakTestCard')){
+    const card=document.createElement('div');card.className='card';card.id='weakTestCard';
+    card.innerHTML='<div class="row"><div><b>苦手テスト</b><p class="small weak-test-copy"></p></div><span class="pill weak-test-count"></span></div><button class="weak-test-button" onclick="startWeakQuiz()"></button>';
+    normalCard.insertAdjacentElement('beforebegin',card);
+  }
+
+  function weakWords(){return words.filter(x=>masteryOf(x.w)==='苦手')}
+  function renderWeakTest(){
+    const card=document.getElementById('weakTestCard');if(!card)return;
+    const weak=weakWords(),button=card.querySelector('.weak-test-button');
+    card.querySelector('.weak-test-count').textContent=weak.length?weak.length+'語':'CLEAR';
+    card.querySelector('.weak-test-copy').textContent=weak.length?'苦手な単語だけを出題します。':'苦手な単語はありません。';
+    button.textContent=weak.length?'苦手テストを始める':'CLEAR';button.disabled=!weak.length;
+  }
+  window.startWeakQuiz=function(){const weak=weakWords();if(weak.length)startQuiz(weak,'weak','settings')};
+
+  const oldUpdateStats=updateStats;
+  updateStats=function(){oldUpdateStats();renderWeakTest()};
+
+  const oldRenderReviewListsV31=renderReviewLists;
+  renderReviewLists=function(){
+    oldRenderReviewListsV31();
+    const existing=document.getElementById('weakClearMessage');if(existing)existing.remove();
+    if(quizMode==='weak'&&!weakWords().length){
+      const clear=document.createElement('div');clear.id='weakClearMessage';clear.className='weak-clear';clear.textContent='CLEAR';
+      reviewWordLists.insertAdjacentElement('beforebegin',clear);
+    }
+    renderWeakTest();
+  };
+
+  const style=document.createElement('style');
+  style.textContent='#weakTestCard{margin-top:14px}#weakTestCard .row>div{min-width:0}#weakTestCard .small{margin:5px 0 0}.weak-test-button:disabled{background:#dcfce7;color:#166534;opacity:1}.weak-clear{margin:18px 0;padding:24px;border-radius:18px;background:#f0fdf4;color:#166534;text-align:center;font-size:32px;font-weight:900;letter-spacing:.08em}.home-status-title .version{font-size:10px;color:#64748b}';
+  document.head.appendChild(style);
+  renderWeakTest();
+})();
+
 /* v3.6 interaction refinements: SET choice, independent shuffled tests, quiz back navigation. */
 (function(){
-  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.30');
+  document.querySelectorAll('.version').forEach(v=>v.textContent='v3.32');
 
   const settings=document.getElementById('settings');
   if(settings&&!document.getElementById('setChoice')){
@@ -138,7 +193,7 @@
     // Resolve at quiz start so learning-plan.js can supply the active
     // priority/scope-aware builder even though it loads after this file.
     const base=custom?[...custom]:window.buildQuiz();
-    quizWords=shuffledDifferent(base);
+    quizWords=custom?shuffledDifferent(base):base;
     qidx=0;score=0;currentWrong=[];questionAnswered=false;
     show('quiz');
     renderQuiz();
@@ -158,10 +213,10 @@
   };
 })();
 
-/* v3.30: high-contrast SET progress rings */
+/* v3.32: SET progress rings; 苦手 stays green across the app */
 (function(){
   window.setRing=function(chunk){
-    const colors={'苦手':'#EF4444','うろ覚え':'#F59E0B','ほぼ覚えた':'#3B82F6','覚えた':'#22C55E','未学習':'#D1D5DB'};
+    const colors={'苦手':'#16A34A','うろ覚え':'#F59E0B','ほぼ覚えた':'#3B82F6','覚えた':'#22C55E','未学習':'#D1D5DB'};
     const order=['覚えた','ほぼ覚えた','うろ覚え','苦手','未学習'];
     const total=chunk.length;let start=0;const parts=[];
     order.forEach(level=>{const n=chunk.filter(x=>masteryOf(x.w)===level).length;if(!n)return;const end=start+n/total*360;parts.push(colors[level]+' '+start+'deg '+end+'deg');start=end});
@@ -175,7 +230,7 @@
     setList.insertAdjacentElement('beforebegin',legend);
   }
   const style=document.createElement('style');
-  style.textContent='.set-ring-legend{display:flex;flex-wrap:wrap;gap:8px 12px;margin:10px 0 3px;color:#64748b;font-size:11px;font-weight:700}.set-ring-legend span{display:flex;align-items:center;gap:5px}.set-ring-legend i{width:9px;height:9px;border-radius:50%}.set-ring-legend .known{background:#22C55E}.set-ring-legend .almost{background:#3B82F6}.set-ring-legend .fuzzy{background:#F59E0B}.set-ring-legend .weak{background:#EF4444}';
+  style.textContent='.set-ring-legend{display:flex;flex-wrap:wrap;gap:8px 12px;margin:10px 0 3px;color:#64748b;font-size:11px;font-weight:700}.set-ring-legend span{display:flex;align-items:center;gap:5px}.set-ring-legend i{width:9px;height:9px;border-radius:50%}.set-ring-legend .known{background:#22C55E}.set-ring-legend .almost{background:#3B82F6}.set-ring-legend .fuzzy{background:#F59E0B}.set-ring-legend .weak{background:#16A34A}';
   document.head.appendChild(style);
 })();
 /* v3.8 result-page word accordion */
@@ -251,7 +306,7 @@
 
 /* v3.29: grammar-matched quiz choices */
 (function(){
-  const groups={
+  const groups=window.YS_EPISODE?.groups||{
     noun:['nourishment','credentials','violation','business','backup','principle','kinematics','intellect','allergy','account','subsection','breach','hygiene','faculty','reputation','uncertainty','haven','handbook','argument','marriage','freshman','license','fad','ammonia','homeroom','attire','grooming','blouse','intelligence','sonata','calculus','geometry','pitch','musician','principal','uniform','supplies','grip','justice'],
     verb:['harass','torment','pursue','recruit','retaliate','recognize','accuse','rat out','deserve','afford'],
     modifier:['revolting','gifted','dimwitted','remarkably','arranged','theoretical','professional','unbalanced','scientific','adopted','financial','reassuring','maliciously','gullible','intimidated','exposed','thorough','despite','designated','diaphanous','assaulted','admirable','extreme','prime','Euclidean','ordinary','complicated','fired','private','comforting','pregnant']
@@ -284,4 +339,18 @@
   const style=document.createElement('style');
   style.textContent='.quiz-pos{display:inline-block;margin:0 0 5px;padding:5px 9px;border-radius:999px;background:#eef2f7;color:#64748b;font-size:12px;font-weight:800}';
   document.head.appendChild(style);
+})();
+
+/* v3.32: add CLEAR after all later review decorators are installed */
+(function(){
+  const decoratedReview=renderReviewLists;
+  renderReviewLists=function(){
+    decoratedReview();
+    const old=document.getElementById('weakClearMessage');if(old)old.remove();
+    const weakLeft=words.some(x=>masteryOf(x.w)==='苦手');
+    if(quizMode==='weak'&&!weakLeft){
+      const clear=document.createElement('div');clear.id='weakClearMessage';clear.className='weak-clear';clear.textContent='CLEAR';
+      reviewWordLists.insertAdjacentElement('beforebegin',clear);
+    }
+  };
 })();
