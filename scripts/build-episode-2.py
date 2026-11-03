@@ -41,11 +41,15 @@ html=html.replace('本編の実際のセリフ','学習用例文（オリジナ�
 html=html.replace('<title>Young Sheldon English</title>','<title>Episode 2 · Young Sheldon English</title>')
 html=re.sub(r'<script src="scene-context.js[^\"]*"></script>','',html)
 html=re.sub(r'src="(smart-tips|learning-plan|episode-ui)\.js',r'src="../\1.js',html)
+html=html.replace('href="speaking/', 'href="../speaking/').replace('src="speaking/', 'src="../speaking/')
+html=html.replace('href="manifest.webmanifest"', 'href="../manifest.webmanifest"')
 (ROOT/'episode-2').mkdir(exist_ok=True)
 (ROOT/'episode-2/index.html').write_text(html)
-# A stable release URL avoids old cached entry pages without duplicating assets.
-(ROOT/'v3.32').mkdir(exist_ok=True)
+# Keep the bookmarked v3.32 entry usable with the same shared assets.
 version=(ROOT/'index.html').read_text()
 version=re.sub(r'src="(smart-tips|learning-plan|scene-context|episode-ui)\.js',r'src="../\1.js',version)
+version=version.replace('href="speaking/', 'href="../speaking/').replace('src="speaking/', 'src="../speaking/')
+version=version.replace('href="manifest.webmanifest"', 'href="../manifest.webmanifest"')
+(ROOT/'v3.32').mkdir(exist_ok=True)
 (ROOT/'v3.32/index.html').write_text(version)
 print('Built Episode 2: 80 words, 8 sets, CORE 40 / PLUS 20 / EXTRA 20')
