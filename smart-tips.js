@@ -215,11 +215,17 @@
 
 /* v3.32: SET progress rings; 苦手 stays green across the app */
 (function(){
-  window.setRing=function(chunk){
+  window.setRing=function(chunk,levelOf=x=>masteryOf(x.w)){
     const colors={'苦手':'#16A34A','うろ覚え':'#F59E0B','ほぼ覚えた':'#3B82F6','覚えた':'#22C55E','未学習':'#D1D5DB'};
     const order=['覚えた','ほぼ覚えた','うろ覚え','苦手','未学習'];
+    const counts=new Map();
+    for(const item of chunk){
+      const value=levelOf(item);
+      const level=order.includes(value)?value:'未学習';
+      counts.set(level,(counts.get(level)||0)+1);
+    }
     const total=chunk.length;let start=0;const parts=[];
-    order.forEach(level=>{const n=chunk.filter(x=>masteryOf(x.w)===level).length;if(!n)return;const end=start+n/total*360;parts.push(colors[level]+' '+start+'deg '+end+'deg');start=end});
+    order.forEach(level=>{const n=counts.get(level);if(!n)return;const end=start+n/total*360;parts.push(colors[level]+' '+start+'deg '+end+'deg');start=end});
     return 'conic-gradient('+parts.join(',')+')';
   };
 

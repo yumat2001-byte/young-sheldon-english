@@ -34,7 +34,12 @@ data=dict(number=2,title='Rockets, Communists, and the Dewey Decimal System',
 # Publish the navigation list from the same catalog that defines the new decks.
 catalog=json.loads((ROOT/'data/season-1.json').read_text())
 assert [c['number'] for c in catalog]==list(range(1,11))
-summary=[{k:c[k] for k in ('number','title','topic')} for c in catalog]
+# The home page needs only headwords to interpret each episode's own saved mastery.
+first_page=(ROOT/'index.html').read_text()
+first_words=re.findall(r"W\('([^']+)'",first_page.split('const words=[',1)[1].split('];const SET_SIZE=',1)[0])
+headwords=[first_words,[w['w'] for w in words],*[list(c['attested']) for c in catalog[2:]]]
+assert all(len(deck)==len(set(deck))==80 for deck in headwords)
+summary=[dict(number=c['number'],title=c['title'],topic=c['topic'],headwords=deck) for c,deck in zip(catalog,headwords)]
 (ROOT/'episode-catalog.js').write_text('window.YS_CATALOG = '+json.dumps(summary,ensure_ascii=False,indent=2)+';\n')
 
 def render_page(number,title,data_tag):
