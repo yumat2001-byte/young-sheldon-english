@@ -54,12 +54,12 @@ try {
   for(let n=1;n<=22;n++) {
     await p.selectOption('#spk-episode',String(n));
     await p.waitForFunction(n=>document.querySelector('#spk-episode').value===String(n)&&document.querySelector('#speaking').classList.contains('active'),n);
-    const total=n===1?86:n===2?80:6;
+    const total=n===2?80:n<=10?86:6;
     assert.equal(await p.locator('#spk-line option').count(),total);
     await p.selectOption('#spk-line',String(total-1));
     assert((await txt(p,'en')).trim()&&(await txt(p,'ja')).trim());
     assert(await p.locator('#spk-next').isDisabled());
-    if(n<=2) {
+    if(n<=10) {
       assert(await p.evaluate(()=>words.every((w,i)=>{
         const select=document.querySelector('#spk-line');select.selectedIndex=i;select.dispatchEvent(new Event('change'));
         return document.querySelector('#spk-en').textContent===w.e&&document.querySelector('#spk-ja').textContent===w.j;
@@ -138,5 +138,5 @@ try {
   await click(prefix,'mic');await result(prefix,await txt(prefix,'en'));
   assert.equal(await txt(prefix,'summary'),'すべての単語が一致しました。');
   assert.deepEqual(errors,[]);
-  console.log('PASS: 22 episodes, all 160 original card mappings, 126 new lines, TTS 0.8/1.0, both recognition APIs (simulated), stop/final/interim, alignment, retry, stale events, permission/network/silence/mic failures, no-mic practice, legacy storage, word-card return, v3.32, 320–1280px.');
+  console.log('PASS: 22 episodes, all 800 vocabulary card mappings, 126 new lines, TTS 0.8/1.0, both recognition APIs (simulated), stop/final/interim, alignment, retry, stale events, permission/network/silence/mic failures, no-mic practice, legacy storage, word-card return, v3.32, 320–1280px.');
 } finally {await browser.close()}

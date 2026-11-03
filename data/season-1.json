@@ -1,0 +1,2079 @@
+[
+  {
+    "number": 1,
+    "title": "Sheldon's First Day of High School",
+    "topic": "初登校"
+  },
+  {
+    "number": 2,
+    "title": "Rockets, Communists, and the Dewey Decimal System",
+    "topic": "友達づくりと学校生活"
+  },
+  {
+    "number": 3,
+    "title": "Poker, Faith, and Eggs",
+    "topic": "カードゲームと病院へのお見舞い",
+    "attested": {
+      "hospital": [
+        "hospital"
+      ],
+      "trust": [
+        "trust"
+      ],
+      "awake": [
+        "awake"
+      ],
+      "nurse": [
+        "nurse"
+      ],
+      "mirror": [
+        "mirror"
+      ],
+      "pride": [
+        "pride"
+      ],
+      "babysit": [
+        "babysit",
+        "babysits"
+      ],
+      "worst": [
+        "worst"
+      ],
+      "chest": [
+        "chest"
+      ],
+      "breath": [
+        "breath"
+      ],
+      "asleep": [
+        "asleep"
+      ],
+      "concentrate": [
+        "concentrate"
+      ],
+      "overnight": [
+        "overnight"
+      ],
+      "ambulance": [
+        "ambulance"
+      ],
+      "obvious": [
+        "obvious"
+      ],
+      "fold": [
+        "fold"
+      ],
+      "bluff": [
+        "bluff",
+        "bluffed",
+        "bluffing"
+      ],
+      "quarter": [
+        "quarter"
+      ],
+      "nickel": [
+        "nickel"
+      ],
+      "faith": [
+        "faith"
+      ],
+      "directions": [
+        "directions"
+      ],
+      "update": [
+        "update"
+      ],
+      "continue": [
+        "continue"
+      ],
+      "direction": [
+        "directions"
+      ],
+      "handle": [
+        "handled"
+      ],
+      "calm": [
+        "calm"
+      ],
+      "worried": [
+        "worried"
+      ],
+      "bring": [
+        "brought"
+      ],
+      "expect": [
+        "expect"
+      ],
+      "follow": [
+        "follow",
+        "following"
+      ],
+      "street": [
+        "street"
+      ],
+      "answer": [
+        "answer"
+      ],
+      "learn": [
+        "learned"
+      ],
+      "person": [
+        "person"
+      ],
+      "plan": [
+        "plan"
+      ],
+      "lose": [
+        "lose",
+        "lost"
+      ],
+      "believe": [
+        "believe",
+        "believed"
+      ],
+      "doctor": [
+        "doctor",
+        "doctors"
+      ],
+      "teach": [
+        "teach"
+      ],
+      "chance": [
+        "chance"
+      ],
+      "damage": [
+        "damage"
+      ],
+      "borrow": [
+        "borrowed"
+      ],
+      "unhappy": [
+        "unhappy"
+      ],
+      "admit": [
+        "admit"
+      ],
+      "boil": [
+        "boil"
+      ],
+      "key": [
+        "keys"
+      ],
+      "pastor": [
+        "pastor"
+      ],
+      "rational": [
+        "rational"
+      ],
+      "odds": [
+        "odds"
+      ],
+      "insurance": [
+        "insurance"
+      ],
+      "interesting": [
+        "interesting"
+      ],
+      "listen": [
+        "listen"
+      ],
+      "question": [
+        "questions"
+      ],
+      "ready": [
+        "ready"
+      ],
+      "relax": [
+        "relax"
+      ],
+      "seat": [
+        "seat"
+      ],
+      "secret": [
+        "secret"
+      ],
+      "watch": [
+        "watch"
+      ],
+      "stay": [
+        "stay"
+      ],
+      "dinner": [
+        "dinner"
+      ],
+      "permanent": [
+        "permanent"
+      ],
+      "brief": [
+        "brief"
+      ],
+      "request": [
+        "request"
+      ],
+      "scenario": [
+        "scenario"
+      ],
+      "guarantee": [
+        "guarantee"
+      ],
+      "steal": [
+        "steal"
+      ],
+      "blood": [
+        "blood"
+      ],
+      "prayer": [
+        "prayers"
+      ],
+      "fact": [
+        "fact",
+        "facts"
+      ],
+      "moment": [
+        "moment"
+      ],
+      "hope": [
+        "hope"
+      ],
+      "check": [
+        "check"
+      ],
+      "morning": [
+        "morning"
+      ],
+      "send": [
+        "sent"
+      ],
+      "fine": [
+        "fine"
+      ],
+      "wrong": [
+        "wrong"
+      ],
+      "happen": [
+        "happen",
+        "happening"
+      ],
+      "worry": [
+        "worried",
+        "worry"
+      ],
+      "again": [
+        "again"
+      ],
+      "better": [
+        "better"
+      ]
+    }
+  },
+  {
+    "number": 4,
+    "title": "A Therapist, a Comic Book, and a Breakfast Sausage",
+    "topic": "食べることへの不安と漫画",
+    "attested": {
+      "solid": [
+        "solid"
+      ],
+      "fear": [
+        "fear"
+      ],
+      "chew": [
+        "chew",
+        "chewing",
+        "chews"
+      ],
+      "choke": [
+        "choke",
+        "choked",
+        "choking"
+      ],
+      "comic": [
+        "comic",
+        "comics"
+      ],
+      "trade": [
+        "trade"
+      ],
+      "breathe": [
+        "breathe"
+      ],
+      "risky": [
+        "risky"
+      ],
+      "dessert": [
+        "dessert"
+      ],
+      "emergency": [
+        "emergency"
+      ],
+      "crisis": [
+        "crisis"
+      ],
+      "panic": [
+        "panic"
+      ],
+      "fragile": [
+        "fragile"
+      ],
+      "mention": [
+        "mention"
+      ],
+      "locate": [
+        "locate"
+      ],
+      "session": [
+        "session"
+      ],
+      "courage": [
+        "courage"
+      ],
+      "straw": [
+        "straw"
+      ],
+      "blender": [
+        "blender",
+        "blenders"
+      ],
+      "sausage": [
+        "sausage"
+      ],
+      "typical": [
+        "typical"
+      ],
+      "overcome": [
+        "overcame",
+        "overcome"
+      ],
+      "attention": [
+        "attention"
+      ],
+      "depressing": [
+        "depressing"
+      ],
+      "manage": [
+        "managed"
+      ],
+      "fault": [
+        "fault"
+      ],
+      "assume": [
+        "assuming"
+      ],
+      "bother": [
+        "bothered"
+      ],
+      "school": [
+        "school"
+      ],
+      "homework": [
+        "homework"
+      ],
+      "second": [
+        "second"
+      ],
+      "different": [
+        "different"
+      ],
+      "decide": [
+        "decided"
+      ],
+      "seem": [
+        "seemed"
+      ],
+      "walk": [
+        "walk"
+      ],
+      "count": [
+        "count"
+      ],
+      "family": [
+        "family"
+      ],
+      "explain": [
+        "explain"
+      ],
+      "food": [
+        "food",
+        "foods"
+      ],
+      "late": [
+        "late"
+      ],
+      "blend": [
+        "blend"
+      ],
+      "challenge": [
+        "challenge"
+      ],
+      "wrap": [
+        "wrap"
+      ],
+      "wander": [
+        "wander"
+      ],
+      "health": [
+        "health"
+      ],
+      "taste": [
+        "taste"
+      ],
+      "further": [
+        "further"
+      ],
+      "bone": [
+        "bone"
+      ],
+      "normal": [
+        "normal"
+      ],
+      "label": [
+        "labels"
+      ],
+      "matter": [
+        "matter",
+        "matters"
+      ],
+      "world": [
+        "world"
+      ],
+      "parent": [
+        "parents"
+      ],
+      "remember": [
+        "remember"
+      ],
+      "actually": [
+        "actually"
+      ],
+      "glad": [
+        "glad"
+      ],
+      "first": [
+        "first"
+      ],
+      "life": [
+        "life"
+      ],
+      "word": [
+        "words"
+      ],
+      "leave": [
+        "leave",
+        "left"
+      ],
+      "knife": [
+        "knife"
+      ],
+      "soup": [
+        "soup"
+      ],
+      "shaking": [
+        "shaking"
+      ],
+      "weakness": [
+        "weakness"
+      ],
+      "extraordinary": [
+        "extraordinary"
+      ],
+      "required": [
+        "required"
+      ],
+      "imitate": [
+        "imitate"
+      ],
+      "especially": [
+        "especially"
+      ],
+      "hear": [
+        "hear"
+      ],
+      "room": [
+        "room"
+      ],
+      "ahead": [
+        "ahead"
+      ],
+      "finish": [
+        "finish"
+      ],
+      "problem": [
+        "problems"
+      ],
+      "way": [
+        "way"
+      ],
+      "time": [
+        "time"
+      ],
+      "start": [
+        "start"
+      ],
+      "understand": [
+        "understand",
+        "understanding"
+      ],
+      "feel": [
+        "feel",
+        "feels"
+      ],
+      "need": [
+        "need",
+        "needed",
+        "needs"
+      ],
+      "drive": [
+        "drive"
+      ]
+    }
+  },
+  {
+    "number": 5,
+    "title": "A Solar Calculator, a Game Ball, and a Cheerleader's Bosom",
+    "topic": "統計で考えるフットボール",
+    "attested": {
+      "team": [
+        "team"
+      ],
+      "advice": [
+        "advice"
+      ],
+      "field": [
+        "field"
+      ],
+      "apply": [
+        "applied",
+        "apply"
+      ],
+      "score": [
+        "scoring"
+      ],
+      "choice": [
+        "choice"
+      ],
+      "reasonable": [
+        "reasonable"
+      ],
+      "crowd": [
+        "crowd"
+      ],
+      "refund": [
+        "refund"
+      ],
+      "statistics": [
+        "statistics"
+      ],
+      "calculator": [
+        "calculator"
+      ],
+      "data": [
+        "data"
+      ],
+      "deep": [
+        "deep"
+      ],
+      "disappointed": [
+        "disappointed"
+      ],
+      "involved": [
+        "involved"
+      ],
+      "remind": [
+        "remind",
+        "reminding"
+      ],
+      "convert": [
+        "convert"
+      ],
+      "equipment": [
+        "equipment"
+      ],
+      "position": [
+        "position"
+      ],
+      "mistake": [
+        "mistake"
+      ],
+      "distance": [
+        "distance"
+      ],
+      "whistle": [
+        "whistle",
+        "whistles"
+      ],
+      "chemistry": [
+        "chemistry"
+      ],
+      "favor": [
+        "favor"
+      ],
+      "ignore": [
+        "ignoring"
+      ],
+      "loan": [
+        "loans"
+      ],
+      "treat": [
+        "treating"
+      ],
+      "pay": [
+        "pay"
+      ],
+      "game": [
+        "game",
+        "games"
+      ],
+      "forget": [
+        "forgot"
+      ],
+      "care": [
+        "care"
+      ],
+      "money": [
+        "money"
+      ],
+      "together": [
+        "together"
+      ],
+      "buy": [
+        "bought"
+      ],
+      "friend": [
+        "friend"
+      ],
+      "night": [
+        "night"
+      ],
+      "idea": [
+        "ideas"
+      ],
+      "use": [
+        "use"
+      ],
+      "hold": [
+        "hold"
+      ],
+      "tomorrow": [
+        "tomorrow"
+      ],
+      "join": [
+        "join"
+      ],
+      "awkward": [
+        "awkward"
+      ],
+      "steady": [
+        "steady"
+      ],
+      "gamble": [
+        "gamble"
+      ],
+      "payment": [
+        "payment"
+      ],
+      "record": [
+        "record"
+      ],
+      "imagine": [
+        "imagine"
+      ],
+      "advanced": [
+        "advanced"
+      ],
+      "punt": [
+        "punt",
+        "punting",
+        "punts"
+      ],
+      "opposing": [
+        "opposing"
+      ],
+      "wait": [
+        "wait"
+      ],
+      "work": [
+        "work"
+      ],
+      "still": [
+        "still"
+      ],
+      "try": [
+        "trying"
+      ],
+      "keep": [
+        "keep",
+        "keeps"
+      ],
+      "minute": [
+        "minute"
+      ],
+      "sleep": [
+        "sleep"
+      ],
+      "turn": [
+        "turn"
+      ],
+      "think": [
+        "think",
+        "thinking",
+        "thought"
+      ],
+      "tell": [
+        "tell",
+        "telling"
+      ],
+      "goal": [
+        "goal"
+      ],
+      "replay": [
+        "replay"
+      ],
+      "popular": [
+        "popular"
+      ],
+      "popularity": [
+        "popularity"
+      ],
+      "assistant": [
+        "assistant"
+      ],
+      "situation": [
+        "situation"
+      ],
+      "patience": [
+        "patience"
+      ],
+      "help": [
+        "help",
+        "helped",
+        "helping"
+      ],
+      "talk": [
+        "talk",
+        "talked",
+        "talking"
+      ],
+      "ask": [
+        "ask",
+        "asked"
+      ],
+      "change": [
+        "change",
+        "changed",
+        "changes"
+      ],
+      "home": [
+        "home"
+      ],
+      "find": [
+        "find"
+      ],
+      "guess": [
+        "guess"
+      ],
+      "sure": [
+        "sure"
+      ],
+      "enough": [
+        "enough"
+      ],
+      "mean": [
+        "mean"
+      ],
+      "move": [
+        "moved"
+      ],
+      "sorry": [
+        "sorry"
+      ],
+      "continue": [
+        "continue",
+        "continued",
+        "continues"
+      ]
+    }
+  },
+  {
+    "number": 6,
+    "title": "A Patch, a Modem, and a Zantac",
+    "topic": "ロケットの研究と資金の相談",
+    "attested": {
+      "rocket": [
+        "rocket",
+        "rockets"
+      ],
+      "prove": [
+        "prove"
+      ],
+      "research": [
+        "research"
+      ],
+      "appointment": [
+        "appointment"
+      ],
+      "respond": [
+        "respond",
+        "responded"
+      ],
+      "weight": [
+        "weight"
+      ],
+      "height": [
+        "height"
+      ],
+      "width": [
+        "width"
+      ],
+      "loan": [
+        "loan"
+      ],
+      "cost": [
+        "costs"
+      ],
+      "access": [
+        "access"
+      ],
+      "effective": [
+        "effective"
+      ],
+      "sufficient": [
+        "sufficient"
+      ],
+      "willing": [
+        "willing"
+      ],
+      "technical": [
+        "technical"
+      ],
+      "explore": [
+        "explore"
+      ],
+      "negotiate": [
+        "negotiate"
+      ],
+      "manage": [
+        "manage"
+      ],
+      "execute": [
+        "execute",
+        "executes"
+      ],
+      "capability": [
+        "capability"
+      ],
+      "equation": [
+        "equation"
+      ],
+      "ratio": [
+        "ratio",
+        "ratios"
+      ],
+      "interested": [
+        "interested"
+      ],
+      "astronaut": [
+        "astronauts"
+      ],
+      "choose": [
+        "chose"
+      ],
+      "launch": [
+        "launch"
+      ],
+      "shuttle": [
+        "shuttle"
+      ],
+      "study": [
+        "studying"
+      ],
+      "prepare": [
+        "prepare"
+      ],
+      "name": [
+        "name"
+      ],
+      "maybe": [
+        "maybe"
+      ],
+      "overcome": [
+        "overcome"
+      ],
+      "treat": [
+        "treat",
+        "treated",
+        "treating"
+      ],
+      "school": [
+        "school"
+      ],
+      "second": [
+        "second"
+      ],
+      "answer": [
+        "answer"
+      ],
+      "different": [
+        "different"
+      ],
+      "walk": [
+        "walk"
+      ],
+      "family": [
+        "family"
+      ],
+      "money": [
+        "money"
+      ],
+      "reusable": [
+        "reusable"
+      ],
+      "booster": [
+        "booster"
+      ],
+      "engine": [
+        "engine"
+      ],
+      "unfair": [
+        "unfair"
+      ],
+      "career": [
+        "career"
+      ],
+      "complete": [
+        "complete"
+      ],
+      "behavior": [
+        "behavior"
+      ],
+      "milestone": [
+        "milestone"
+      ],
+      "thrust": [
+        "thrust"
+      ],
+      "landing": [
+        "landing"
+      ],
+      "relax": [
+        "relax",
+        "relaxed"
+      ],
+      "doctor": [
+        "doctor"
+      ],
+      "explain": [
+        "explain"
+      ],
+      "interesting": [
+        "interesting"
+      ],
+      "listen": [
+        "listen"
+      ],
+      "question": [
+        "question"
+      ],
+      "teach": [
+        "teaching"
+      ],
+      "together": [
+        "together"
+      ],
+      "dinner": [
+        "dinner"
+      ],
+      "send": [
+        "send"
+      ],
+      "site": [
+        "site"
+      ],
+      "successfully": [
+        "successfully"
+      ],
+      "lately": [
+        "lately"
+      ],
+      "unusual": [
+        "unusual"
+      ],
+      "mortgage": [
+        "mortgage"
+      ],
+      "funds": [
+        "funds"
+      ],
+      "punish": [
+        "punish"
+      ],
+      "topic": [
+        "topic"
+      ],
+      "buy": [
+        "buy"
+      ],
+      "food": [
+        "food",
+        "foods"
+      ],
+      "friend": [
+        "friend"
+      ],
+      "glad": [
+        "glad"
+      ],
+      "matter": [
+        "matter"
+      ],
+      "actually": [
+        "actually"
+      ],
+      "hope": [
+        "hope"
+      ],
+      "late": [
+        "late"
+      ],
+      "moment": [
+        "moment"
+      ],
+      "parent": [
+        "parents"
+      ],
+      "remember": [
+        "remember"
+      ],
+      "stay": [
+        "stay"
+      ]
+    }
+  },
+  {
+    "number": 7,
+    "title": "A Brisket, Voodoo, and Cannonball Run",
+    "topic": "家族のレシピと仲直り",
+    "attested": {
+      "recipe": [
+        "recipe"
+      ],
+      "share": [
+        "share"
+      ],
+      "piece": [
+        "piece"
+      ],
+      "instructions": [
+        "instructions"
+      ],
+      "handle": [
+        "handle"
+      ],
+      "agree": [
+        "agree"
+      ],
+      "promise": [
+        "promise"
+      ],
+      "stubborn": [
+        "stubborn"
+      ],
+      "regular": [
+        "regular"
+      ],
+      "flame": [
+        "flame"
+      ],
+      "grind": [
+        "grind"
+      ],
+      "teaspoon": [
+        "teaspoon"
+      ],
+      "tablespoon": [
+        "tablespoon",
+        "tablespoons"
+      ],
+      "picnic": [
+        "picnic"
+      ],
+      "soggy": [
+        "soggy"
+      ],
+      "quit": [
+        "quit"
+      ],
+      "feud": [
+        "feud"
+      ],
+      "divorce": [
+        "divorce"
+      ],
+      "rarely": [
+        "rarely"
+      ],
+      "impossible": [
+        "impossible"
+      ],
+      "jealous": [
+        "jealous"
+      ],
+      "kitchen": [
+        "kitchen"
+      ],
+      "quest": [
+        "quest"
+      ],
+      "opportunity": [
+        "opportunity"
+      ],
+      "struggle": [
+        "struggling"
+      ],
+      "steal": [
+        "steal"
+      ],
+      "apply": [
+        "applied"
+      ],
+      "bluff": [
+        "bluffing"
+      ],
+      "admit": [
+        "admits"
+      ],
+      "fault": [
+        "fault"
+      ],
+      "quarter": [
+        "quarter"
+      ],
+      "prepare": [
+        "prepared"
+      ],
+      "person": [
+        "person"
+      ],
+      "learn": [
+        "learned"
+      ],
+      "secret": [
+        "secret"
+      ],
+      "care": [
+        "care"
+      ],
+      "seat": [
+        "seat"
+      ],
+      "fact": [
+        "fact"
+      ],
+      "morning": [
+        "morning"
+      ],
+      "wait": [
+        "waiting"
+      ],
+      "schedule": [
+        "schedule"
+      ],
+      "peace": [
+        "peace"
+      ],
+      "bring": [
+        "bring",
+        "bringing",
+        "brought"
+      ],
+      "step": [
+        "step"
+      ],
+      "complain": [
+        "complaining"
+      ],
+      "spice": [
+        "spice"
+      ],
+      "sugar": [
+        "sugar"
+      ],
+      "brisket": [
+        "brisket"
+      ],
+      "beef": [
+        "beef"
+      ],
+      "tenderness": [
+        "tenderness"
+      ],
+      "way": [
+        "way"
+      ],
+      "again": [
+        "again"
+      ],
+      "fine": [
+        "fine"
+      ],
+      "hold": [
+        "held",
+        "hold"
+      ],
+      "work": [
+        "work"
+      ],
+      "ahead": [
+        "ahead"
+      ],
+      "finish": [
+        "finish"
+      ],
+      "happen": [
+        "happening"
+      ],
+      "idea": [
+        "idea"
+      ],
+      "problem": [
+        "problem"
+      ],
+      "extract": [
+        "extract"
+      ],
+      "smoked": [
+        "smoked"
+      ],
+      "medium": [
+        "medium"
+      ],
+      "treat": [
+        "treated",
+        "treating"
+      ],
+      "sudden": [
+        "sudden"
+      ],
+      "written": [
+        "written"
+      ],
+      "struggling": [
+        "struggling"
+      ],
+      "perfect": [
+        "perfect"
+      ],
+      "room": [
+        "room"
+      ],
+      "tomorrow": [
+        "tomorrow"
+      ],
+      "use": [
+        "used"
+      ],
+      "worry": [
+        "worry"
+      ],
+      "time": [
+        "time"
+      ],
+      "need": [
+        "need",
+        "needed"
+      ],
+      "still": [
+        "still"
+      ],
+      "try": [
+        "tried",
+        "try"
+      ],
+      "drive": [
+        "drive"
+      ],
+      "keep": [
+        "keep"
+      ],
+      "maybe": [
+        "maybe"
+      ],
+      "minute": [
+        "minute"
+      ]
+    }
+  },
+  {
+    "number": 8,
+    "title": "Cape Canaveral, Schrödinger's Cat, and Cyndi Lauper's Hair",
+    "topic": "打ち上げを見に行く家族旅行",
+    "attested": {
+      "trip": [
+        "trip"
+      ],
+      "launch": [
+        "launch"
+      ],
+      "storm": [
+        "storm"
+      ],
+      "pretend": [
+        "pretend"
+      ],
+      "convince": [
+        "convince"
+      ],
+      "adventure": [
+        "adventure"
+      ],
+      "likely": [
+        "likely"
+      ],
+      "nervous": [
+        "nervous"
+      ],
+      "choose": [
+        "choose"
+      ],
+      "conversation": [
+        "conversation"
+      ],
+      "rain": [
+        "rain"
+      ],
+      "thunder": [
+        "thunder"
+      ],
+      "lightning": [
+        "lightning"
+      ],
+      "experiment": [
+        "experiment"
+      ],
+      "observe": [
+        "observed"
+      ],
+      "freedom": [
+        "freedom"
+      ],
+      "alert": [
+        "alert"
+      ],
+      "mandatory": [
+        "mandatory"
+      ],
+      "protection": [
+        "protection"
+      ],
+      "astronaut": [
+        "astronaut"
+      ],
+      "motel": [
+        "motel"
+      ],
+      "allowance": [
+        "allowance"
+      ],
+      "escape": [
+        "escape"
+      ],
+      "realize": [
+        "realize"
+      ],
+      "early": [
+        "early"
+      ],
+      "meet": [
+        "meet"
+      ],
+      "guarantee": [
+        "guarantee"
+      ],
+      "ignore": [
+        "ignore"
+      ],
+      "rocket": [
+        "rockets"
+      ],
+      "schedule": [
+        "schedule"
+      ],
+      "share": [
+        "share"
+      ],
+      "calm": [
+        "calm"
+      ],
+      "assume": [
+        "assuming"
+      ],
+      "name": [
+        "name"
+      ],
+      "forget": [
+        "forget"
+      ],
+      "game": [
+        "game"
+      ],
+      "plan": [
+        "plan",
+        "plans"
+      ],
+      "believe": [
+        "believe",
+        "believed"
+      ],
+      "ready": [
+        "ready"
+      ],
+      "chance": [
+        "chance"
+      ],
+      "positive": [
+        "positive"
+      ],
+      "quick": [
+        "quick"
+      ],
+      "charge": [
+        "charges"
+      ],
+      "collision": [
+        "collision"
+      ],
+      "rotation": [
+        "rotation"
+      ],
+      "exciting": [
+        "exciting"
+      ],
+      "safe": [
+        "safe"
+      ],
+      "fishing": [
+        "fishing"
+      ],
+      "butterfly": [
+        "butterfly"
+      ],
+      "shuttle": [
+        "shuttle",
+        "shuttles"
+      ],
+      "count": [
+        "count"
+      ],
+      "lose": [
+        "lose"
+      ],
+      "world": [
+        "world"
+      ],
+      "better": [
+        "better"
+      ],
+      "leave": [
+        "leave",
+        "leaving"
+      ],
+      "first": [
+        "first"
+      ],
+      "night": [
+        "night"
+      ],
+      "hear": [
+        "heard"
+      ],
+      "sleep": [
+        "sleep"
+      ],
+      "feel": [
+        "feel"
+      ],
+      "spacecraft": [
+        "spacecraft"
+      ],
+      "depending": [
+        "depending"
+      ],
+      "giant": [
+        "giant"
+      ],
+      "cloud": [
+        "cloud",
+        "clouds"
+      ],
+      "wave": [
+        "wave"
+      ],
+      "surprise": [
+        "surprise"
+      ],
+      "besides": [
+        "besides"
+      ],
+      "turn": [
+        "turn",
+        "turned"
+      ],
+      "understand": [
+        "understand",
+        "understood"
+      ],
+      "start": [
+        "started"
+      ],
+      "think": [
+        "think",
+        "thinking",
+        "thought"
+      ],
+      "change": [
+        "change",
+        "changed",
+        "changing"
+      ],
+      "enough": [
+        "enough"
+      ],
+      "sorry": [
+        "sorry"
+      ],
+      "sure": [
+        "sure"
+      ],
+      "talk": [
+        "talk",
+        "talking"
+      ],
+      "tell": [
+        "tell",
+        "told"
+      ],
+      "find": [
+        "find"
+      ],
+      "mean": [
+        "mean",
+        "meant"
+      ],
+      "guess": [
+        "guess"
+      ]
+    }
+  },
+  {
+    "number": 9,
+    "title": "Spock, Kirk, and Testicular Hernia",
+    "topic": "勉強を教え合う兄弟",
+    "attested": {
+      "study": [
+        "study"
+      ],
+      "cheat": [
+        "cheat",
+        "cheated",
+        "cheating"
+      ],
+      "tutor": [
+        "tutor"
+      ],
+      "explanation": [
+        "explanation"
+      ],
+      "helpful": [
+        "helpful"
+      ],
+      "fail": [
+        "fail",
+        "failed"
+      ],
+      "struggle": [
+        "struggle"
+      ],
+      "difficult": [
+        "difficult"
+      ],
+      "ashamed": [
+        "ashamed"
+      ],
+      "honest": [
+        "honest"
+      ],
+      "library": [
+        "library"
+      ],
+      "textbook": [
+        "textbook"
+      ],
+      "knowledge": [
+        "knowledge"
+      ],
+      "evidence": [
+        "evidence"
+      ],
+      "guidance": [
+        "guidance"
+      ],
+      "capable": [
+        "capable"
+      ],
+      "divide": [
+        "divide"
+      ],
+      "reverse": [
+        "reverse"
+      ],
+      "accept": [
+        "accept"
+      ],
+      "guilty": [
+        "guilty"
+      ],
+      "reward": [
+        "reward"
+      ],
+      "succeed": [
+        "succeed"
+      ],
+      "experience": [
+        "experience"
+      ],
+      "humorous": [
+        "humorous"
+      ],
+      "provide": [
+        "providing"
+      ],
+      "satisfy": [
+        "satisfying"
+      ],
+      "team": [
+        "team"
+      ],
+      "favor": [
+        "favor"
+      ],
+      "realize": [
+        "realize"
+      ],
+      "brisket": [
+        "brisket"
+      ],
+      "career": [
+        "careers"
+      ],
+      "written": [
+        "written"
+      ],
+      "bother": [
+        "bother"
+      ],
+      "follow": [
+        "follow"
+      ],
+      "seem": [
+        "seem",
+        "seemed"
+      ],
+      "decide": [
+        "decided"
+      ],
+      "meet": [
+        "meet"
+      ],
+      "watch": [
+        "watching"
+      ],
+      "check": [
+        "check"
+      ],
+      "life": [
+        "life"
+      ],
+      "strategy": [
+        "strategy"
+      ],
+      "injury": [
+        "injury"
+      ],
+      "attend": [
+        "attend"
+      ],
+      "strength": [
+        "strength"
+      ],
+      "slope": [
+        "slope"
+      ],
+      "identify": [
+        "identify"
+      ],
+      "lift": [
+        "lift",
+        "lifting"
+      ],
+      "sincerely": [
+        "sincerely"
+      ],
+      "details": [
+        "details"
+      ],
+      "graph": [
+        "graph"
+      ],
+      "word": [
+        "word"
+      ],
+      "wrong": [
+        "wrong"
+      ],
+      "help": [
+        "help",
+        "helping",
+        "helps"
+      ],
+      "ask": [
+        "ask",
+        "asked",
+        "asking"
+      ],
+      "home": [
+        "home"
+      ],
+      "move": [
+        "move",
+        "moved"
+      ],
+      "assume": [
+        "assume"
+      ],
+      "prepare": [
+        "preparing"
+      ],
+      "bring": [
+        "brought"
+      ],
+      "school": [
+        "school"
+      ],
+      "direction": [
+        "direction"
+      ],
+      "regardless": [
+        "regardless"
+      ],
+      "unlikely": [
+        "unlikely"
+      ],
+      "risk": [
+        "risk"
+      ],
+      "include": [
+        "include"
+      ],
+      "restore": [
+        "restore"
+      ],
+      "carefully": [
+        "carefully"
+      ],
+      "rethink": [
+        "rethink"
+      ],
+      "answer": [
+        "answers"
+      ],
+      "learn": [
+        "learn"
+      ],
+      "believe": [
+        "believe",
+        "believed"
+      ],
+      "explain": [
+        "explain"
+      ],
+      "money": [
+        "money"
+      ],
+      "question": [
+        "question"
+      ],
+      "teach": [
+        "teach",
+        "teaching"
+      ],
+      "care": [
+        "care"
+      ],
+      "chance": [
+        "chance"
+      ],
+      "count": [
+        "count"
+      ],
+      "lose": [
+        "lost"
+      ],
+      "relax": [
+        "relax"
+      ]
+    }
+  },
+  {
+    "number": 10,
+    "title": "An Eagle Feather, a String Bean, and an Eskimo",
+    "topic": "転校と家を離れる生活",
+    "attested": {
+      "decision": [
+        "decision"
+      ],
+      "school": [
+        "school"
+      ],
+      "scholarship": [
+        "scholarship"
+      ],
+      "interview": [
+        "interview"
+      ],
+      "consider": [
+        "consider"
+      ],
+      "appreciate": [
+        "appreciate"
+      ],
+      "quiet": [
+        "quiet"
+      ],
+      "comfortable": [
+        "comfortable"
+      ],
+      "local": [
+        "local"
+      ],
+      "available": [
+        "available"
+      ],
+      "concern": [
+        "concern"
+      ],
+      "reassure": [
+        "reassure"
+      ],
+      "generous": [
+        "generous"
+      ],
+      "recommendation": [
+        "recommendation"
+      ],
+      "education": [
+        "education"
+      ],
+      "curriculum": [
+        "curriculum"
+      ],
+      "challenging": [
+        "challenging"
+      ],
+      "approach": [
+        "approach"
+      ],
+      "productive": [
+        "productive"
+      ],
+      "express": [
+        "express"
+      ],
+      "absence": [
+        "absence"
+      ],
+      "departure": [
+        "departure"
+      ],
+      "atomic": [
+        "atomic"
+      ],
+      "awake": [
+        "awake"
+      ],
+      "jealous": [
+        "jealous"
+      ],
+      "perfect": [
+        "perfect"
+      ],
+      "safe": [
+        "safe"
+      ],
+      "worried": [
+        "worried"
+      ],
+      "bother": [
+        "bother"
+      ],
+      "meet": [
+        "meet"
+      ],
+      "seem": [
+        "seemed"
+      ],
+      "plan": [
+        "plans"
+      ],
+      "family": [
+        "family"
+      ],
+      "watch": [
+        "watch",
+        "watched"
+      ],
+      "listen": [
+        "listen"
+      ],
+      "ready": [
+        "ready"
+      ],
+      "seat": [
+        "seat"
+      ],
+      "moment": [
+        "moment"
+      ],
+      "world": [
+        "world"
+      ],
+      "actually": [
+        "actually"
+      ],
+      "suggestion": [
+        "suggestion"
+      ],
+      "opportunity": [
+        "opportunity"
+      ],
+      "impressed": [
+        "impressed"
+      ],
+      "selfish": [
+        "selfish"
+      ],
+      "retired": [
+        "retired"
+      ],
+      "belong": [
+        "belonged"
+      ],
+      "brave": [
+        "brave"
+      ],
+      "traffic": [
+        "traffic"
+      ],
+      "graduate": [
+        "graduate",
+        "graduated"
+      ],
+      "receive": [
+        "receive"
+      ],
+      "buy": [
+        "buy"
+      ],
+      "check": [
+        "checking"
+      ],
+      "dinner": [
+        "dinner"
+      ],
+      "food": [
+        "food"
+      ],
+      "friend": [
+        "friend"
+      ],
+      "glad": [
+        "glad"
+      ],
+      "matter": [
+        "matter"
+      ],
+      "morning": [
+        "morning"
+      ],
+      "parent": [
+        "parents"
+      ],
+      "send": [
+        "send"
+      ],
+      "several": [
+        "several"
+      ],
+      "recently": [
+        "recently"
+      ],
+      "memory": [
+        "memory"
+      ],
+      "message": [
+        "message"
+      ],
+      "example": [
+        "example"
+      ],
+      "offer": [
+        "offer"
+      ],
+      "basement": [
+        "basement"
+      ],
+      "measure": [
+        "measure"
+      ],
+      "idea": [
+        "idea"
+      ],
+      "use": [
+        "use",
+        "used",
+        "using"
+      ],
+      "hear": [
+        "hear",
+        "heard"
+      ],
+      "hold": [
+        "held",
+        "hold"
+      ],
+      "room": [
+        "room"
+      ],
+      "fine": [
+        "fine"
+      ],
+      "leave": [
+        "leave",
+        "leaving"
+      ],
+      "night": [
+        "night"
+      ],
+      "way": [
+        "way"
+      ],
+      "better": [
+        "better"
+      ],
+      "first": [
+        "first"
+      ],
+      "worry": [
+        "worried"
+      ]
+    }
+  }
+]

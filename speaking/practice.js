@@ -1,6 +1,7 @@
 (() => {
   const root = new URL('../', document.currentScript.src);
   const currentEpisode = window.YS_EPISODE?.number || 1;
+  const decks = new Set(window.YS_CATALOG?.map(lesson=>lesson.number) || [1,2]);
   const existing = words.map(x => ({english:x.e, japanese:x.j, label:x.w}));
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const micAvailable = !!Recognition && window.isSecureContext;
@@ -59,7 +60,7 @@
   let session = null, utterance = null, timer = null, manualResult = false;
 
   for (let n=1; n<=22; n++) {
-    const topic = n <= 2 ? '単語教材' : window.seasonSpeaking[n][0];
+    const topic = decks.has(n) ? '単語教材' : window.seasonSpeaking[n][0];
     episodeSelect.add(new Option('第'+n+'話 · '+topic, String(n)));
   }
   function stopAudio() {
@@ -98,9 +99,9 @@
     $('spk-rate').disabled = !canListen;
   }
   function selectEpisode(n, start = 0) {
-    if (n<=2 && n!==currentEpisode) {
+    if (decks.has(n) && n!==currentEpisode) {
       stopAudio();
-      location.assign(new URL(n===1?'index.html#read-aloud':'episode-2/index.html#read-aloud', root));
+      location.assign(new URL(n===1?'index.html#read-aloud':'episode-'+n+'/index.html#read-aloud', root));
       return;
     }
     episodeSelect.value = String(n);
@@ -111,7 +112,8 @@
     }
     const source = $('spk-source');
     source.textContent = n===1 ? '第1話の単語カードの英文・語句と、初登校をテーマにした追加会話。' :
-      n===2 ? '第2話の単語カードに収録されている学習用例文。' : 'テーマ「'+window.seasonSpeaking[n][0]+'」の学習用オリジナル会話。';
+      n===2 ? '第2話の単語カードに収録されている学習用例文。' :
+      decks.has(n) ? 'この回の単語カード80枚と、テーマ「'+window.seasonSpeaking[n][0]+'」の追加会話6文。' : 'テーマ「'+window.seasonSpeaking[n][0]+'」の学習用オリジナル会話。';
     if (n!==2) {
       const link = document.createElement('a');
       link.textContent='各話のあらすじ ↗';

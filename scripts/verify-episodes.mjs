@@ -22,7 +22,7 @@ try {
   assert.equal(await page.locator('#knownStat').textContent(),'1');
   assert.equal(await page.locator('#weakStat').textContent(),'1');
   const original=await page.evaluate(()=>localStorage.getItem('ys-state'));
-  assert.equal(await page.locator('#home .episode').count(),2);
+  assert.equal(await page.locator('#home .episode').count(),10);
   await page.getByRole('link',{name:/2 Episode 2/}).click();
   assert(page.url().includes('/episode-2/'));
   assert.equal(await page.locator('#knownStat').textContent(),'0');
@@ -33,7 +33,7 @@ try {
   assert.equal(new Set(data.words).size,80);
   assert.deepEqual(data.words,Object.values(data.tiers).flat());
   assert.equal(await page.locator('#home .today').isVisible(),false);
-  await page.getByRole('button',{name:'第2話の単語セットを開く'}).click();
+  await visible('#episode');
   assert.equal(await page.locator('#setList .set-row').count(),8);
   await page.locator('#setList .set-row').first().click();
   assert.equal(await page.locator('#setChoice .small').first().textContent(),'Episode 2');

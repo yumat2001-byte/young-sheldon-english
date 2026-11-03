@@ -29,7 +29,7 @@
   function tipFor(x){
     if(!x||!x.w)return null;
     // Episode 2 has reviewed word-family entries; do not infer roots by spelling.
-    if(window.YS_EPISODE?.number===2)return null;
+    if(window.YS_EPISODE)return null;
     if(trivia[x.w])return trivia[x.w];
     const p=autoParts.find(p=>p.re.test(x.w));
     return p?{title:'WORD PARTS · '+p.label,html:p.text}:null;
